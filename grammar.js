@@ -28,24 +28,14 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   conflicts: $ => [
-    [$.call_expression, $.binary_expression],
-    [$.type, $.tuple_expression],
-    [$.type, $.list_expression],
     [$.parenthesized_expression, $.tuple_expression],
-    [$.pattern, $.match_pattern],
-    [$.struct_literal, $.dict_expression],
-    [$.field_expression, $.enum_variant_expression],
-    [ $._postfix_base, $.enum_variant_expression ],
     [$.source_file, $.statement],
-    [$.statement, $.expression],
+    [$.top_level_item, $.statement],
     [$.pattern, $.type_pattern],
     [$.match_pattern, $.enum_pattern],
-    [$.unary_expression, $.ternary_expression, $.try_expression],
-    [$.binary_expression, $.ternary_expression, $.try_expression],
     [$.match_pattern, $.type_pattern, $.enum_pattern],
     [$.match_expression, $.type_of_expression],
     [$.expression, $._postfix_base],
-    [$.expression, $.struct_literal],
     [$.expression, $.expression_statement],
     [$.return_statement, $.expression],
     [$.let_statement, $.expression],
@@ -58,6 +48,7 @@ module.exports = grammar({
     top_level_item: $ => choice(
       $.from_import,
       $.import_statement,
+      $.constant_definition,
       $.function_definition,
       $.struct_definition,
       $.interface_definition,
@@ -86,6 +77,17 @@ module.exports = grammar({
       optional(seq('as', $.identifier)),
     ),
 
+    constant_definition: $ => seq(
+      'const',
+      field('name', $.identifier),
+      optional(seq(':', field('type', $.type))),
+      '=',
+      field('value', $.expression),
+      $.newline,
+    ),
+
+    statement_block: $ => repeat1($.statement),
+
     function_definition: $ => seq(
       'def',
       field('name', $.identifier),
@@ -95,11 +97,21 @@ module.exports = grammar({
       ':',
       $.newline,
       $.indent,
-      field('body', repeat($.statement)),
+      field('body', optional($.statement_block)),
       $.dedent,
     ),
 
-    type_parameters: $ => seq('[', commaSep1($.identifier), ']'),
+    type_parameters: $ => seq(
+      '[',
+      commaSep1(choice($.identifier, $.bounded_type_parameter)),
+      ']',
+    ),
+
+    bounded_type_parameter: $ => seq(
+      field('name', $.identifier),
+      ':',
+      field('bound', $.type),
+    ),
 
     parameters: $ => seq('(', commaSep($.parameter), ')'),
 
@@ -116,14 +128,22 @@ module.exports = grammar({
       ':',
       $.newline,
       $.indent,
-      field('body', repeat($.struct_member)),
+      field('body', optional($.struct_member_block)),
       $.dedent,
     ),
 
     struct_member: $ => choice(
       $.newline,
       $.field_definition,
+      $.embedded_field,
       $.function_definition,
+    ),
+
+    struct_member_block: $ => repeat1($.struct_member),
+
+    embedded_field: $ => seq(
+      field('type', $.type),
+      $.newline,
     ),
 
     field_definition: $ => seq(
@@ -140,7 +160,7 @@ module.exports = grammar({
       ':',
       $.newline,
       $.indent,
-      field('body', repeat($.interface_member)),
+      field('body', optional($.interface_member_block)),
       $.dedent,
     ),
 
@@ -151,6 +171,8 @@ module.exports = grammar({
       $.associated_type,
       $.associated_constant,
     ),
+
+    interface_member_block: $ => repeat1($.interface_member),
 
     interface_method: $ => seq(
       'def',
@@ -164,7 +186,7 @@ module.exports = grammar({
           ':',
           $.newline,
           $.indent,
-          field('body', repeat($.statement)),
+          field('body', optional($.statement_block)),
           $.dedent,
         ),
       ),
@@ -195,7 +217,7 @@ module.exports = grammar({
       ':',
       $.newline,
       $.indent,
-      field('body', repeat($.impl_member)),
+      field('body', optional($.impl_member_block)),
       $.dedent,
     ),
 
@@ -205,6 +227,8 @@ module.exports = grammar({
       $.associated_type_assignment,
       $.associated_constant_assignment,
     ),
+
+    impl_member_block: $ => repeat1($.impl_member),
 
     associated_type_assignment: $ => seq(
       'type',
@@ -231,7 +255,7 @@ module.exports = grammar({
       ':',
       $.newline,
       $.indent,
-      field('body', repeat($.enum_member_variant)),
+      field('body', optional($.enum_member_block)),
       repeat($.newline),
       $.dedent,
     ),
@@ -242,8 +266,11 @@ module.exports = grammar({
       $.newline,
     ),
 
+    enum_member_block: $ => repeat1($.enum_member_variant),
+
     statement: $ => choice(
       $.newline,
+      $.constant_definition,
       $.let_statement,
       $.assignment_statement,
       $.return_statement,
@@ -480,11 +507,11 @@ module.exports = grammar({
       $.super_expression,
       $.integer,
       $.float,
+      $.rune,
       $.string,
       $.triple_string,
       $.byte,
       $.boolean,
-      $.none_expression,
       $.list_expression,
       $.dict_expression,
       $.tuple_expression,
@@ -494,6 +521,7 @@ module.exports = grammar({
       $.match_expression,
       $.if_expression,
       $.list_comprehension,
+      $.lambda_expression,
       $.type_of_expression,
       $.call_expression,
       $.field_expression,
@@ -506,7 +534,6 @@ module.exports = grammar({
 
     self_expression: _ => 'self',
     super_expression: _ => 'super',
-    none_expression: _ => 'None',
 
     call_expression: $ => prec.left(PREC.postfix, seq(
       field('function', $._postfix_base),
@@ -534,16 +561,15 @@ module.exports = grammar({
       $.super_expression,
       $.integer,
       $.float,
+      $.rune,
       $.string,
       $.byte,
       $.boolean,
-      $.none_expression,
       $.list_expression,
       $.dict_expression,
       $.tuple_expression,
       $.parenthesized_expression,
       $.struct_literal,
-      $.enum_variant_expression,
       $.call_expression,
       $.field_expression,
       $.index_expression,
@@ -591,11 +617,16 @@ module.exports = grammar({
       field('value', $.expression),
     ),
 
-    enum_variant_expression: $ => prec.left(PREC.postfix, seq(
-      field('enum', $.identifier),
-      '.',
-      field('variant', $.identifier),
-      optional(seq('(', commaSep($.expression), ')')),
+    enum_variant_expression: $ => prec.left(PREC.postfix + 1, seq(
+      choice(
+        seq(
+          field('enum', $.identifier),
+          '.',
+          field('variant', $.identifier),
+        ),
+        field('variant', choice('Some', 'None', 'Ok', 'Err')),
+      ),
+      optional($.arguments),
     )),
 
     if_expression: $ => prec.right(PREC.ternary, seq(
@@ -629,6 +660,13 @@ module.exports = grammar({
       ']',
     ),
 
+    lambda_expression: $ => seq(
+      'lambda',
+      field('parameters', $.parameters),
+      '->',
+      field('body', $.expression),
+    ),
+
     type_of_expression: $ => seq('type', 'of', $.expression),
 
     type: $ => choice(
@@ -639,6 +677,7 @@ module.exports = grammar({
     type_atom: $ => choice(
       $.identifier,
       seq($.identifier, '[', commaSep1($.type), ']'),
+      seq('[', $.type, ']'),
       seq('(', commaSep($.type), ')', optional(seq('->', $.type))),
     ),
 
@@ -647,9 +686,13 @@ module.exports = grammar({
     identifier: _ => /[A-Za-z_][A-Za-z0-9_]*/,
     integer: _ => /[0-9]+/,
     float: _ => /[0-9]+\.[0-9]*/,
+    rune: _ => token(prec(2, choice(
+      seq("'", /[^'\\\n]/, "'"),
+      seq("'", /\\./, "'"),
+    ))),
     string: _ => token(choice(
       seq('"', repeat(choice(/[^"\\\n]/, /\\./)), '"'),
-      seq("'", repeat(choice(/[^'\\\n]/, /\\./)), "'"),
+      prec(1, seq("'", repeat1(choice(/[^'\\\n]/, /\\./)), "'")),
     )),
     triple_string: _ => token(seq(
       "'''",
