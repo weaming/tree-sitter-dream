@@ -1,0 +1,460 @@
+==============================
+Imports, functions, calls
+==============================
+from bootstrap_io import read_text_file, text_length
+
+def read_source(path: str) -> str:
+    let source = read_text_file(path)
+    return source
+
+def main():
+    let source = read_source("compiler.dm")
+    print(text_length(source))
+
+---
+
+(source_file
+  (top_level_item
+    (from_import
+      (module_name
+        (identifier))
+      (import_name
+        (identifier))
+      (import_name
+        (identifier))
+      (newline)))
+  (newline)
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (parameter
+          (identifier)
+          (type
+            (type_atom
+              (identifier)))))
+      (type
+        (type_atom
+          (identifier)))
+      (newline)
+      (indent)
+      (statement
+        (let_statement
+          (pattern
+            (identifier))
+          (expression
+            (call_expression
+              (identifier)
+              (arguments
+                (expression
+                  (identifier)))))
+          (newline)))
+      (statement
+        (return_statement
+          (expression
+            (identifier))
+          (newline)))
+      (statement
+        (newline))
+      (dedent)))
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters)
+      (newline)
+      (indent)
+      (statement
+        (let_statement
+          (pattern
+            (identifier))
+          (expression
+            (call_expression
+              (identifier)
+              (arguments
+                (expression
+                  (string)))))
+          (newline)))
+      (statement
+        (print_statement
+          (expression
+            (call_expression
+              (identifier)
+              (arguments
+                (expression
+                  (identifier)))))
+          (newline)))
+      (dedent))))
+
+==============================
+Declarations, patterns and expressions
+==============================
+from types import Vec2 as Point
+
+struct Vec2[T]:
+    x: T
+    y: T
+
+    def get_x(self) -> T:
+        '''返回 x 坐标'''
+        return self.x
+
+interface Add[T]:
+    type Item = T
+    def add(self, other: T) -> T
+
+impl Add[int] for Vec2[int]:
+    def add(self, other: int) -> int:
+        pass
+
+enum Result[T]:
+    Ok(T)
+    Err(str)
+
+def convert(value: Result[int]) -> int | str:
+    let items = [1, 2, 3]
+    let first = items[0:2]
+    let data = {"value": first}
+    return match value:
+        Ok(number) if number > 0:
+            number
+        Err(message): message
+
+---
+
+(source_file
+  (top_level_item
+    (from_import
+      (module_name
+        (identifier))
+      (import_name
+        (identifier)
+        (identifier))
+      (newline)))
+  (newline)
+  (top_level_item
+    (struct_definition
+      (identifier)
+      (type_parameters
+        (identifier))
+      (newline)
+      (indent)
+      (struct_member
+        (field_definition
+          (identifier)
+          (type
+            (type_atom
+              (identifier)))
+          (newline)))
+      (struct_member
+        (field_definition
+          (identifier)
+          (type
+            (type_atom
+              (identifier)))
+          (newline)))
+      (struct_member
+        (newline))
+      (struct_member
+        (function_definition
+          (identifier)
+          (parameters
+            (parameter))
+          (type
+            (type_atom
+              (identifier)))
+          (newline)
+          (indent)
+          (statement
+            (expression_statement
+              (expression
+                (triple_string))
+              (newline)))
+          (statement
+            (return_statement
+              (expression
+                (field_expression
+                  (self_expression)
+                  (identifier)))
+              (newline)))
+          (statement
+            (newline))
+          (dedent)))
+      (dedent)))
+  (top_level_item
+    (interface_definition
+      (identifier)
+      (type_parameters
+        (identifier))
+      (newline)
+      (indent)
+      (interface_member
+        (associated_type
+          (identifier)
+          (type
+            (type_atom
+              (identifier)))
+          (newline)))
+      (interface_member
+        (interface_method
+          (identifier)
+          (parameters
+            (parameter)
+            (parameter
+              (identifier)
+              (type
+                (type_atom
+                  (identifier)))))
+          (type
+            (type_atom
+              (identifier)))
+          (newline)))
+      (interface_member
+        (newline))
+      (dedent)))
+  (top_level_item
+    (impl_definition
+      (identifier)
+      (type_arguments
+        (type
+          (type_atom
+            (identifier))))
+      (type
+        (type_atom
+          (identifier)
+          (type
+            (type_atom
+              (identifier)))))
+      (newline)
+      (indent)
+      (impl_member
+        (function_definition
+          (identifier)
+          (parameters
+            (parameter)
+            (parameter
+              (identifier)
+              (type
+                (type_atom
+                  (identifier)))))
+          (type
+            (type_atom
+              (identifier)))
+          (newline)
+          (indent)
+          (statement
+            (pass_statement
+              (newline)))
+          (statement
+            (newline))
+          (dedent)))
+      (dedent)))
+  (top_level_item
+    (enum_definition
+      (identifier)
+      (type_parameters
+        (identifier))
+      (newline)
+      (indent)
+      (enum_member_variant
+        (identifier)
+        (type
+          (type_atom
+            (identifier)))
+        (newline))
+      (enum_member_variant
+        (identifier)
+        (type
+          (type_atom
+            (identifier)))
+        (newline))
+      (newline)
+      (dedent)))
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (parameter
+          (identifier)
+          (type
+            (type_atom
+              (identifier)
+              (type
+                (type_atom
+                  (identifier)))))))
+      (type
+        (type_atom
+          (identifier))
+        (type_atom
+          (identifier)))
+      (newline)
+      (indent)
+      (statement
+        (let_statement
+          (pattern
+            (identifier))
+          (expression
+            (list_expression
+              (expression
+                (integer))
+              (expression
+                (integer))
+              (expression
+                (integer))))
+          (newline)))
+      (statement
+        (let_statement
+          (pattern
+            (identifier))
+          (expression
+            (index_expression
+              (identifier)
+              (slice
+                (expression
+                  (integer))
+                (expression
+                  (integer)))))
+          (newline)))
+      (statement
+        (let_statement
+          (pattern
+            (identifier))
+          (expression
+            (dict_expression
+              (dict_pair
+                (expression
+                  (string))
+                (expression
+                  (identifier)))))
+          (newline)))
+      (statement
+        (return_statement
+          (match_expression
+            (expression
+              (identifier))
+            (newline)
+            (indent)
+            (match_case
+              (match_pattern
+                (enum_pattern
+                  (identifier)
+                  (match_pattern
+                    (identifier))))
+              (expression
+                (binary_expression
+                  (expression
+                    (identifier))
+                  (expression
+                    (integer))))
+              (newline)
+              (indent)
+              (statement
+                (expression_statement
+                  (expression
+                    (identifier))
+                  (newline)))
+              (dedent))
+            (match_case
+              (match_pattern
+                (enum_pattern
+                  (identifier)
+                  (match_pattern
+                    (identifier))))
+              (expression
+                (identifier))
+              (newline))
+            (dedent))))
+      (dedent))))
+
+==============================
+Nested control flow
+==============================
+def classify(value: int) -> int:
+    if value > 10:
+        return value
+    elif value == 10:
+        return 0
+    else:
+        while value < 10:
+            let value = value + 1
+        return value
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (parameter
+          (identifier)
+          (type
+            (type_atom
+              (identifier)))))
+      (type
+        (type_atom
+          (identifier)))
+      (newline)
+      (indent)
+      (statement
+        (if_statement
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (integer))))
+          (newline)
+          (indent)
+          (statement
+            (return_statement
+              (expression
+                (identifier))
+              (newline)))
+          (dedent)
+          (elif_clause
+            (expression
+              (binary_expression
+                (expression
+                  (identifier))
+                (expression
+                  (integer))))
+            (newline)
+            (indent)
+            (statement
+              (return_statement
+                (expression
+                  (integer))
+                (newline)))
+            (dedent))
+          (else_clause
+            (newline)
+            (indent)
+            (statement
+              (while_statement
+                (expression
+                  (binary_expression
+                    (expression
+                      (identifier))
+                    (expression
+                      (integer))))
+                (newline)
+                (indent)
+                (statement
+                  (let_statement
+                    (pattern
+                      (identifier))
+                    (expression
+                      (binary_expression
+                        (expression
+                          (identifier))
+                        (expression
+                          (integer))))
+                    (newline)))
+                (dedent)))
+            (statement
+              (return_statement
+                (expression
+                  (identifier))
+                (newline)))
+            (dedent))))
+      (dedent))))
