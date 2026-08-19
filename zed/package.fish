@@ -55,6 +55,25 @@ else
     rm -rf "$source_dir/target" "$source_dir/dist" "$source_dir/extension.wasm" "$source_dir/grammars"
 end
 
+set -l manifest_path "$source_dir/extension.toml"
+if string match -q '*rev = "HEAD"*' < "$manifest_path"
+    set -l repository_root (realpath "$extension_dir/..")
+    set -l grammar_revision (git -C "$repository_root" rev-parse --verify origin/main 2>/dev/null)
+    if test -z "$grammar_revision"
+        set grammar_revision (git -C "$repository_root" rev-parse --verify HEAD 2>/dev/null)
+    end
+    if test -z "$grammar_revision"
+        echo "Could not resolve the Dream grammar HEAD revision." >&2
+        exit 1
+    end
+
+    set -l temporary_manifest_path "$manifest_path.tmp"
+    string replace 'rev = "HEAD"' "rev = \"$grammar_revision\"" \
+        < "$manifest_path" > "$temporary_manifest_path"
+    mv "$temporary_manifest_path" "$manifest_path"
+    echo "Resolved Dream grammar HEAD to $grammar_revision"
+end
+
 if not $extension_cli \
     --source-dir "$source_dir" \
     --output-dir "$output_dir" \

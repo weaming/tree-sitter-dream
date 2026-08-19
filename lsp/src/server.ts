@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-import { existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import dreamGrammarWasmPath from '../../tree-sitter-dream.wasm' with { type: 'file' };
 import {
   CompletionParams,
   createConnection,
@@ -21,32 +17,11 @@ import {
 } from 'vscode-languageserver/node.js';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { DreamLanguageService } from './analyzer.js';
+import { findWasmPath } from './wasm.js';
 
 const connection = createConnection(ProposedFeatures.all, process.stdin, process.stdout);
 const documents = new TextDocuments(TextDocument);
 let languageService: DreamLanguageService | undefined;
-
-function findWasmPath(): string {
-  const configuredWasmPath = process.env.DREAM_TREE_SITTER_WASM;
-  if (configuredWasmPath && existsSync(configuredWasmPath)) return configuredWasmPath;
-  if (dreamGrammarWasmPath) return dreamGrammarWasmPath;
-
-  const currentDirectory = dirname(fileURLToPath(import.meta.url));
-  const candidates = [
-    join(currentDirectory, 'tree-sitter-dream.wasm'),
-    join(currentDirectory, '../tree-sitter-dream.wasm'),
-    join(currentDirectory, '../../tree-sitter-dream.wasm'),
-    resolve(process.cwd(), 'tree-sitter-dream.wasm'),
-  ].filter((candidate): candidate is string => Boolean(candidate));
-
-  const wasmPath = candidates.find((candidate) => existsSync(candidate));
-  if (!wasmPath) {
-    throw new Error(
-      'Cannot find tree-sitter-dream.wasm. Build the WASM parser or set DREAM_TREE_SITTER_WASM.',
-    );
-  }
-  return wasmPath;
-}
 
 function publishDiagnostics(document: TextDocument): void {
   if (!languageService) return;
