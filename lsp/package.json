@@ -1,0 +1,30 @@
+{
+  "name": "@dream-lang/language-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Language Server Protocol implementation for Dream",
+  "type": "module",
+  "bin": {
+    "dream-language-server": "./dist/dream-language-server"
+  },
+  "scripts": {
+    "build": "bun run build:bin",
+    "build:bin": "mkdir -p dist && bun build --compile --minify src/server.ts --outfile=dist/dream-language-server",
+    "build:server": "bun build src/server.ts --target=node --outdir=dist",
+    "build:js": "bun run build:server && bun run copy:wasm",
+    "copy:wasm": "mkdir -p dist && cp ../tree-sitter-dream.wasm dist/tree-sitter-dream.wasm && cp node_modules/web-tree-sitter/tree-sitter.wasm dist/tree-sitter.wasm",
+    "dev": "bun run src/server.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.12",
+    "web-tree-sitter": "^0.25.10"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.2"
+  }
+}
