@@ -5,10 +5,6 @@ ZED_EXTENSION_PACKAGE ?= zed/dist/dream-lang.tar.gz
 ZED_GIT_SSH_PREFIX ?= git@github.com:weaming/
 ZED_GIT_HTTPS_PREFIX ?= https://github.com/weaming/
 
-.PHONY: lsp-build install install-lsp install-lsp-server install-lsp-mcp install-zed-extension
-
-install-all: install-lsp install-zed-extension
-
 install-lsp: lsp-build install-lsp-server install-lsp-mcp
 
 lsp-build:

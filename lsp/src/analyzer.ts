@@ -14,7 +14,7 @@ import {
   WorkspaceEdit,
 } from 'vscode-languageserver/node.js';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { Language, Node as SyntaxNode, Parser } from 'web-tree-sitter';
+import { Language, Node as SyntaxNode, Parser, Tree } from 'web-tree-sitter';
 import treeSitterRuntimeWasmPath from 'web-tree-sitter/tree-sitter.wasm' with { type: 'file' };
 
 interface SymbolRecord {
@@ -247,6 +247,7 @@ function getWordAtPosition(document: TextDocument, position: Position): WordAtPo
 
 export class DreamLanguageService {
   private readonly parser: Parser;
+  private readonly trees = new Map<string, Tree>();
   private readonly analyses = new Map<string, {
     document: TextDocument;
     analysis: DocumentAnalysis;
@@ -267,77 +268,75 @@ export class DreamLanguageService {
   }
 
   update(document: TextDocument): DocumentAnalysis {
-    const tree = this.parser.parse(document.getText());
+    const oldTree = this.trees.get(document.uri);
+    const tree = this.parser.parse(document.getText(), oldTree);
     if (!tree) throw new Error(`Unable to parse document: ${document.uri}`);
+    this.trees.set(document.uri, tree);
 
-    try {
-      const positions = new SourcePositions(document.getText());
-      const definitions: SymbolRecord[] = [];
-      const identifiers: IdentifierRecord[] = [];
-      const definitionNodeIds = new Set<number>();
-      const definitionKeys = new Set<string>();
+    const positions = new SourcePositions(document.getText());
+    const definitions: SymbolRecord[] = [];
+    const identifiers: IdentifierRecord[] = [];
+    const definitionNodeIds = new Set<number>();
+    const definitionKeys = new Set<string>();
 
-      const addDefinition = (
-        nameNode: SyntaxNode,
-        kind: SymbolKind,
-        detail: string,
-        owner: SyntaxNode,
-      ): void => {
-        const key = nodeKey(nameNode);
-        if (definitionKeys.has(key)) return;
-        definitionKeys.add(key);
-        definitionNodeIds.add(nameNode.id);
-        definitions.push({
-          name: nameNode.text,
-          kind,
-          range: positions.range(owner),
-          selectionRange: positions.range(nameNode),
-          detail,
-          nodeId: owner.id,
-          nameNodeId: nameNode.id,
-        });
-      };
-
-      walkNode(tree.rootNode, (node) => {
-        const declarationKind = DECLARATION_KINDS[node.type];
-        if (declarationKind) {
-          const nameNode = getDeclarationNameNode(node);
-          if (nameNode) addDefinition(nameNode, declarationKind.kind, declarationKind.detail, node);
-        }
-
-        if (node.type === 'let_statement') {
-          collectPatternBindings(node.childForFieldName('name'), addDefinition, node);
-        }
-
-        if (node.type === 'for_statement') {
-          collectPatternBindings(node.childForFieldName('pattern'), addDefinition, node);
-        }
-
-        if (node.type === 'match_case') {
-          collectPatternBindings(node.childForFieldName('pattern'), addDefinition, node);
-        }
-
-        if (node.type === 'identifier') {
-          identifiers.push({ name: node.text, range: positions.range(node), nodeId: node.id });
-        }
+    const addDefinition = (
+      nameNode: SyntaxNode,
+      kind: SymbolKind,
+      detail: string,
+      owner: SyntaxNode,
+    ): void => {
+      const key = nodeKey(nameNode);
+      if (definitionKeys.has(key)) return;
+      definitionKeys.add(key);
+      definitionNodeIds.add(nameNode.id);
+      definitions.push({
+        name: nameNode.text,
+        kind,
+        range: positions.range(owner),
+        selectionRange: positions.range(nameNode),
+        detail,
+        nodeId: owner.id,
+        nameNodeId: nameNode.id,
       });
+    };
 
-      const diagnostics = this.createDiagnostics(tree.rootNode, positions);
-      const symbols = definitions.map((symbol) => ({
-        name: symbol.name,
-        kind: symbol.kind,
-        range: symbol.range,
-        selectionRange: symbol.selectionRange,
-        detail: symbol.detail,
-      }));
-      const foldingRanges = this.createFoldingRanges(tree.rootNode);
-      const analysis = { diagnostics, symbols, foldingRanges };
+    walkNode(tree.rootNode, (node) => {
+      const declarationKind = DECLARATION_KINDS[node.type];
+      if (declarationKind) {
+        const nameNode = getDeclarationNameNode(node);
+        if (nameNode) addDefinition(nameNode, declarationKind.kind, declarationKind.detail, node);
+      }
 
-      this.analyses.set(document.uri, { document, analysis, definitions, identifiers });
-      return analysis;
-    } finally {
-      tree.delete();
-    }
+      if (node.type === 'let_statement') {
+        collectPatternBindings(node.childForFieldName('name'), addDefinition, node);
+      }
+
+      if (node.type === 'for_statement') {
+        collectPatternBindings(node.childForFieldName('pattern'), addDefinition, node);
+      }
+
+      if (node.type === 'match_case') {
+        collectPatternBindings(node.childForFieldName('pattern'), addDefinition, node);
+      }
+
+      if (node.type === 'identifier') {
+        identifiers.push({ name: node.text, range: positions.range(node), nodeId: node.id });
+      }
+    });
+
+    const diagnostics = this.createDiagnostics(tree.rootNode, positions);
+    const symbols = definitions.map((symbol) => ({
+      name: symbol.name,
+      kind: symbol.kind,
+      range: symbol.range,
+      selectionRange: symbol.selectionRange,
+      detail: symbol.detail,
+    }));
+    const foldingRanges = this.createFoldingRanges(tree.rootNode);
+    const analysis = { diagnostics, symbols, foldingRanges };
+
+    this.analyses.set(document.uri, { document, analysis, definitions, identifiers });
+    return analysis;
   }
 
   getAnalysis(uri: string): DocumentAnalysis | undefined {
@@ -345,6 +344,8 @@ export class DreamLanguageService {
   }
 
   remove(uri: string): void {
+    this.trees.get(uri)?.delete();
+    this.trees.delete(uri);
     this.analyses.delete(uri);
   }
 
@@ -434,6 +435,8 @@ export class DreamLanguageService {
   }
 
   dispose(): void {
+    for (const tree of this.trees.values()) tree.delete();
+    this.trees.clear();
     this.parser.delete();
     this.analyses.clear();
   }
