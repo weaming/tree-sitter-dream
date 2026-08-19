@@ -2897,7 +2897,7 @@
     },
     "call_expression": {
       "type": "PREC_LEFT",
-      "value": 9,
+      "value": 14,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2906,7 +2906,7 @@
             "name": "function",
             "content": {
               "type": "SYMBOL",
-              "name": "_postfix_base"
+              "name": "_postfixable_base"
             }
           },
           {
@@ -2980,7 +2980,7 @@
     },
     "field_expression": {
       "type": "PREC_LEFT",
-      "value": 9,
+      "value": 14,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2989,7 +2989,7 @@
             "name": "object",
             "content": {
               "type": "SYMBOL",
-              "name": "_postfix_base"
+              "name": "_postfixable_base"
             }
           },
           {
@@ -3009,7 +3009,7 @@
     },
     "index_expression": {
       "type": "PREC_LEFT",
-      "value": 9,
+      "value": 14,
       "content": {
         "type": "SEQ",
         "members": [
@@ -3018,7 +3018,7 @@
             "name": "object",
             "content": {
               "type": "SYMBOL",
-              "name": "_postfix_base"
+              "name": "_postfixable_base"
             }
           },
           {
@@ -3122,6 +3122,19 @@
         }
       ]
     },
+    "_postfixable_base": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_postfix_base"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "enum_variant_expression"
+        }
+      ]
+    },
     "slice": {
       "type": "SEQ",
       "members": [
@@ -3157,7 +3170,7 @@
     },
     "unary_expression": {
       "type": "PREC",
-      "value": 8,
+      "value": 12,
       "content": {
         "type": "SEQ",
         "members": [
@@ -3169,11 +3182,19 @@
               "members": [
                 {
                   "type": "STRING",
+                  "value": "+"
+                },
+                {
+                  "type": "STRING",
                   "value": "-"
                 },
                 {
                   "type": "STRING",
                   "value": "not"
+                },
+                {
+                  "type": "STRING",
+                  "value": "~"
                 }
               ]
             }
@@ -3245,6 +3266,69 @@
                 "name": "expression"
               },
               {
+                "type": "STRING",
+                "value": "|"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 6,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "STRING",
+                "value": "^"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 7,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "STRING",
+                "value": "&"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 8,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
                 "type": "CHOICE",
                 "members": [
                   {
@@ -3282,7 +3366,37 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": 6,
+          "value": 9,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "<<"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": ">>"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 10,
           "content": {
             "type": "SEQ",
             "members": [
@@ -3312,7 +3426,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": 7,
+          "value": 11,
           "content": {
             "type": "SEQ",
             "members": [
@@ -3333,9 +3447,34 @@
                   },
                   {
                     "type": "STRING",
+                    "value": "//"
+                  },
+                  {
+                    "type": "STRING",
                     "value": "%"
                   }
                 ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 13,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "STRING",
+                "value": "**"
               },
               {
                 "type": "SYMBOL",
@@ -3639,7 +3778,7 @@
     },
     "enum_variant_expression": {
       "type": "PREC_LEFT",
-      "value": 10,
+      "value": 15,
       "content": {
         "type": "SEQ",
         "members": [
@@ -3781,13 +3920,13 @@
     },
     "try_expression": {
       "type": "PREC",
-      "value": 9,
+      "value": 14,
       "content": {
         "type": "SEQ",
         "members": [
           {
             "type": "SYMBOL",
-            "name": "_postfix_base"
+            "name": "_postfixable_base"
           },
           {
             "type": "STRING",
@@ -4395,6 +4534,10 @@
     [
       "expression",
       "_postfix_base"
+    ],
+    [
+      "expression",
+      "_postfixable_base"
     ],
     [
       "expression",

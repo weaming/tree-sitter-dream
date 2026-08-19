@@ -293,6 +293,10 @@
             "named": true
           },
           {
+            "type": "enum_variant_expression",
+            "named": true
+          },
+          {
             "type": "field_expression",
             "named": true
           },
@@ -951,6 +955,10 @@
             "named": true
           },
           {
+            "type": "enum_variant_expression",
+            "named": true
+          },
+          {
             "type": "field_expression",
             "named": true
           },
@@ -1441,6 +1449,10 @@
           },
           {
             "type": "dict_expression",
+            "named": true
+          },
+          {
+            "type": "enum_variant_expression",
             "named": true
           },
           {
@@ -2658,6 +2670,10 @@
           "named": true
         },
         {
+          "type": "enum_variant_expression",
+          "named": true
+        },
+        {
           "type": "field_expression",
           "named": true
         },
@@ -2870,11 +2886,19 @@
         "required": true,
         "types": [
           {
+            "type": "+",
+            "named": false
+          },
+          {
             "type": "-",
             "named": false
           },
           {
             "type": "not",
+            "named": false
+          },
+          {
+            "type": "~",
             "named": false
           }
         ]
@@ -2934,6 +2958,10 @@
     "named": false
   },
   {
+    "type": "&",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -2943,6 +2971,10 @@
   },
   {
     "type": "*",
+    "named": false
+  },
+  {
+    "type": "**",
     "named": false
   },
   {
@@ -2970,6 +3002,10 @@
     "named": false
   },
   {
+    "type": "//",
+    "named": false
+  },
+  {
     "type": ":",
     "named": false
   },
@@ -2979,6 +3015,10 @@
   },
   {
     "type": "<",
+    "named": false
+  },
+  {
+    "type": "<<",
     "named": false
   },
   {
@@ -2999,6 +3039,10 @@
   },
   {
     "type": ">=",
+    "named": false
+  },
+  {
+    "type": ">>",
     "named": false
   },
   {
@@ -3035,6 +3079,10 @@
   },
   {
     "type": "]",
+    "named": false
+  },
+  {
+    "type": "^",
     "named": false
   },
   {
@@ -3228,6 +3276,10 @@
   },
   {
     "type": "}",
+    "named": false
+  },
+  {
+    "type": "~",
     "named": false
   }
 ]

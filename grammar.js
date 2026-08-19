@@ -3,11 +3,16 @@ const PREC = {
   union: 2,
   logicalOr: 3,
   logicalAnd: 4,
-  compare: 5,
-  sum: 6,
-  product: 7,
-  unary: 8,
-  postfix: 9,
+  bitwiseOr: 5,
+  bitwiseXor: 6,
+  bitwiseAnd: 7,
+  compare: 8,
+  shift: 9,
+  sum: 10,
+  product: 11,
+  unary: 12,
+  power: 13,
+  postfix: 14,
 };
 
 function commaSep(rule) {
@@ -36,6 +41,7 @@ module.exports = grammar({
     [$.match_pattern, $.type_pattern, $.enum_pattern],
     [$.match_expression, $.type_of_expression],
     [$.expression, $._postfix_base],
+    [$.expression, $._postfixable_base],
     [$.expression, $.expression_statement],
     [$.return_statement, $.expression],
     [$.let_statement, $.expression],
@@ -536,20 +542,20 @@ module.exports = grammar({
     super_expression: _ => 'super',
 
     call_expression: $ => prec.left(PREC.postfix, seq(
-      field('function', $._postfix_base),
+      field('function', $._postfixable_base),
       field('arguments', $.arguments),
     )),
 
     arguments: $ => seq('(', commaSep($.expression), ')'),
 
     field_expression: $ => prec.left(PREC.postfix, seq(
-      field('object', $._postfix_base),
+      field('object', $._postfixable_base),
       '.',
       field('field', $.identifier),
     )),
 
     index_expression: $ => prec.left(PREC.postfix, seq(
-      field('object', $._postfix_base),
+      field('object', $._postfixable_base),
       '[',
       field('index', choice($.slice, $.expression)),
       ']',
@@ -575,6 +581,11 @@ module.exports = grammar({
       $.index_expression,
     ),
 
+    _postfixable_base: $ => choice(
+      $._postfix_base,
+      $.enum_variant_expression,
+    ),
+
     slice: $ => seq(
       optional($.expression),
       ':',
@@ -582,16 +593,21 @@ module.exports = grammar({
     ),
 
     unary_expression: $ => prec(PREC.unary, seq(
-      field('operator', choice('-', 'not')),
+      field('operator', choice('+', '-', 'not', '~')),
       field('argument', $.expression),
     )),
 
     binary_expression: $ => choice(
       prec.left(PREC.logicalOr, seq($.expression, 'or', $.expression)),
       prec.left(PREC.logicalAnd, seq($.expression, 'and', $.expression)),
+      prec.left(PREC.bitwiseOr, seq($.expression, '|', $.expression)),
+      prec.left(PREC.bitwiseXor, seq($.expression, '^', $.expression)),
+      prec.left(PREC.bitwiseAnd, seq($.expression, '&', $.expression)),
       prec.left(PREC.compare, seq($.expression, choice('==', '!=', '<', '<=', '>', '>='), $.expression)),
+      prec.left(PREC.shift, seq($.expression, choice('<<', '>>'), $.expression)),
       prec.left(PREC.sum, seq($.expression, choice('+', '-'), $.expression)),
-      prec.left(PREC.product, seq($.expression, choice('*', '/', '%'), $.expression)),
+      prec.left(PREC.product, seq($.expression, choice('*', '/', '//', '%'), $.expression)),
+      prec.right(PREC.power, seq($.expression, '**', $.expression)),
     ),
 
     parenthesized_expression: $ => seq('(', $.expression, ')'),
@@ -647,7 +663,7 @@ module.exports = grammar({
       $.expression,
     )),
 
-    try_expression: $ => prec(PREC.postfix, seq($._postfix_base, '?')),
+    try_expression: $ => prec(PREC.postfix, seq($._postfixable_base, '?')),
 
     list_comprehension: $ => seq(
       '[',

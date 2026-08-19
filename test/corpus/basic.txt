@@ -88,6 +88,140 @@ def main():
       (dedent))))
 
 ==============================
+Operators and chained postfix expressions
+==============================
+def evaluate(value: int):
+    let chained = value.strip().length()
+    let powered = -2 ** 3
+    let quotient = 7 // 2
+    let bits = 5 & 3 | 1 ^ 2
+    let shifted = 1 << 4
+    let unary = +~value
+    print(chained + powered + quotient + bits + shifted + unary)
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (parameter
+          (identifier)
+          (type
+            (type_atom
+              (identifier)))))
+      (newline)
+      (indent)
+      (statement_block
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (call_expression
+                (field_expression
+                  (call_expression
+                    (enum_variant_expression
+                      (identifier)
+                      (identifier))
+                    (arguments))
+                  (identifier))
+                (arguments)))
+            (newline)))
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (unary_expression
+                (expression
+                  (binary_expression
+                    (expression
+                      (integer))
+                    (expression
+                      (integer))))))
+            (newline)))
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (binary_expression
+                (expression
+                  (integer))
+                (expression
+                  (integer))))
+            (newline)))
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (binary_expression
+                (expression
+                  (binary_expression
+                    (expression
+                      (integer))
+                    (expression
+                      (integer))))
+                (expression
+                  (binary_expression
+                    (expression
+                      (integer))
+                    (expression
+                      (integer))))))
+            (newline)))
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (binary_expression
+                (expression
+                  (integer))
+                (expression
+                  (integer))))
+            (newline)))
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (unary_expression
+                (expression
+                  (unary_expression
+                    (expression
+                      (identifier))))))
+            (newline)))
+        (statement
+          (print_statement
+            (expression
+              (binary_expression
+                (expression
+                  (binary_expression
+                    (expression
+                      (binary_expression
+                        (expression
+                          (binary_expression
+                            (expression
+                              (binary_expression
+                                (expression
+                                  (identifier))
+                                (expression
+                                  (identifier))))
+                            (expression
+                              (identifier))))
+                        (expression
+                          (identifier))))
+                    (expression
+                      (identifier))))
+                (expression
+                  (identifier))))
+            (newline))))
+      (dedent))))
+
+==============================
 Reference parser coverage
 ==============================
 struct Embedded:
@@ -155,7 +289,8 @@ def make_values(value: str):
             (pattern
               (identifier))
             (expression
-              (enum_variant_expression
+              (call_expression
+                (enum_variant_expression)
                 (arguments
                   (expression
                     (identifier)))))
@@ -172,7 +307,8 @@ def make_values(value: str):
             (pattern
               (identifier))
             (expression
-              (enum_variant_expression
+              (call_expression
+                (enum_variant_expression)
                 (arguments
                   (expression
                     (integer)))))
@@ -182,7 +318,8 @@ def make_values(value: str):
             (pattern
               (identifier))
             (expression
-              (enum_variant_expression
+              (call_expression
+                (enum_variant_expression)
                 (arguments
                   (expression
                     (integer)))))
