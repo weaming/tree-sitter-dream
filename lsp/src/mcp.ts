@@ -167,6 +167,11 @@ function createWorkspaceToolResult(value: WorkspaceRelationsResult): ToolCallRes
   if (value.truncatedSymbols) lines.push(`- Truncated symbols: ${value.truncatedSymbols}`);
   if (value.truncatedReferences) lines.push(`- Truncated references: ${value.truncatedReferences}`);
 
+  const usedKinds = new Set(value.symbols.map((symbol) => symbol[2]));
+  const kindEntries = Object.entries(SYMBOL_KIND_NAMES)
+    .filter(([kind]) => usedKinds.has(Number(kind)))
+    .sort(([left], [right]) => Number(left) - Number(right));
+
   lines.push(
     '',
     '## Files',
@@ -180,9 +185,7 @@ function createWorkspaceToolResult(value: WorkspaceRelationsResult): ToolCallRes
     '',
     '```csv',
     'kind,name',
-    ...Object.entries(SYMBOL_KIND_NAMES)
-      .sort(([left], [right]) => Number(left) - Number(right))
-      .map(([kind, name]) => csvRow([kind, name])),
+    ...kindEntries.map(([kind, name]) => csvRow([kind, name])),
     '```',
     '',
     'File indexes are zero-based references into this table; line and character indexes are zero-based.',
@@ -423,6 +426,19 @@ async function main(): Promise<void> {
           continue;
         }
 
+        if (request.method === 'notifications/initialized') {
+          continue;
+        }
+
+        if (request.method === 'shutdown') {
+          writeResponse(request.id, null);
+          continue;
+        }
+
+        if (request.method === 'exit') {
+          process.exit(0);
+        }
+
         if (request.method === 'ping') {
           writeResponse(request.id, {});
           continue;
@@ -447,7 +463,12 @@ async function main(): Promise<void> {
         writeError(request.id, -32601, `Unsupported MCP method: ${request.method}`);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        writeResponse(request.id, createToolResult({ error: message }, true));
+        const suggestion = message.includes('No Dream source file found')
+          ? ' Use dream_workspace to list available files.'
+          : message.includes("must be a non-empty string")
+          ? ' Check the required parameters for this tool.'
+          : '';
+        writeResponse(request.id, createToolResult({ error: message + suggestion }, true));
       }
     }
   } finally {

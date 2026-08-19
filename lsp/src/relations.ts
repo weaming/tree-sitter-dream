@@ -5,8 +5,23 @@ import { DocumentSymbol, Location, Position, SymbolKind } from 'vscode-languages
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { DreamLanguageService, DocumentAnalysis } from './analyzer.js';
 
-const IGNORED_DIRECTORY_NAMES = new Set(['.git', 'dist', 'node_modules', 'target', 'tmp']);
+const IGNORED_DIRECTORY_NAMES = new Set(['.git', 'dist', 'node_modules', 'target', 'tmp', 'venv', '.venv', '__pycache__']);
+const IGNORED_FILE_EXTENSIONS = new Set(['.wasm', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.mp3', '.mp4', '.webm', '.ogg']);
 const IMPORT_PATTERN = /^\s*(?:from\s+([A-Za-z_][A-Za-z0-9_./]*)\s+)?import\s+(.+?)\s*$/;
+
+interface LoadedDocument {
+  path: string;
+  uri: string;
+  document: TextDocument;
+  analysis: DocumentAnalysis;
+}
+
+interface CachedDocument {
+  mtime: number;
+  document: LoadedDocument;
+}
+
+const documentCache = new Map<string, CachedDocument>();
 
 export interface WorkspaceFileResult {
   path: string;
@@ -67,13 +82,6 @@ export interface SymbolReferenceSearchResult {
   truncatedMatches?: number;
 }
 
-interface LoadedDocument {
-  path: string;
-  uri: string;
-  document: TextDocument;
-  analysis: DocumentAnalysis;
-}
-
 async function collectDreamFiles(rootPath: string, maxFiles: number): Promise<string[]> {
   const absoluteRoot = resolve(rootPath);
   const rootStats = await stat(absoluteRoot);
@@ -104,6 +112,26 @@ async function collectDreamFiles(rootPath: string, maxFiles: number): Promise<st
   return filePaths;
 }
 
+async function loadSingleDocument(
+  languageService: DreamLanguageService,
+  filePath: string,
+): Promise<LoadedDocument> {
+  const fileStat = await stat(filePath);
+  const cached = documentCache.get(filePath);
+  if (cached && cached.mtime === fileStat.mtimeMs) {
+    return cached.document;
+  }
+
+  const uri = pathToFileURL(filePath).href;
+  const source = await readFile(filePath, 'utf8');
+  const document = TextDocument.create(uri, 'dream', 1, source);
+  const analysis = languageService.update(document);
+  const loaded: LoadedDocument = { path: filePath, uri, document, analysis };
+
+  documentCache.set(filePath, { mtime: fileStat.mtimeMs, document: loaded });
+  return loaded;
+}
+
 async function loadDocuments(
   languageService: DreamLanguageService,
   rootPath: string,
@@ -111,13 +139,14 @@ async function loadDocuments(
 ): Promise<LoadedDocument[]> {
   const filePaths = await collectDreamFiles(rootPath, maxFiles);
   const documents: LoadedDocument[] = [];
+  const concurrency = 8;
 
-  for (const filePath of filePaths) {
-    const uri = pathToFileURL(filePath).href;
-    const source = await readFile(filePath, 'utf8');
-    const document = TextDocument.create(uri, 'dream', 1, source);
-    const analysis = languageService.update(document);
-    documents.push({ path: filePath, uri, document, analysis });
+  for (let i = 0; i < filePaths.length; i += concurrency) {
+    const chunk = filePaths.slice(i, i + concurrency);
+    const results = await Promise.all(
+      chunk.map((filePath) => loadSingleDocument(languageService, filePath)),
+    );
+    documents.push(...results);
   }
 
   return documents;
@@ -297,6 +326,40 @@ export async function exploreWorkspace(
   const maxSymbols = options.maxSymbols ?? 30;
   const includeReferences = options.includeReferences === true;
   const maxReferences = options.maxReferences ?? 10_000;
+
+  if (options.file) {
+    const filePath = resolve(options.file);
+    const documents = await loadDocuments(languageService, filePath, 1);
+    const document = documents[0];
+    if (!document) {
+      return { schemaVersion: 3, root, level, files: [], symbols: [], imports: [] };
+    }
+
+    const files: FileTuple[] = [[getDisplayPath(root, document.path), document.analysis.diagnostics.length]];
+    const imports = collectImportRelations(document, 0);
+    const availableSymbols = getSymbolsForLevel(document.analysis.symbols, level);
+    const { symbols, symbolSources } = await collectSymbolIndexes(languageService, document, 0, availableSymbols);
+
+    let references: Record<string, ReferenceTuple[]> = {};
+    let truncatedReferences = 0;
+    if (includeReferences) {
+      const collectedRefs = await collectSelectedReferences(languageService, symbolSources, maxReferences);
+      references = collectedRefs.references;
+      truncatedReferences = collectedRefs.truncatedReferences;
+    }
+
+    return {
+      schemaVersion: 3,
+      root,
+      level,
+      files,
+      symbols,
+      imports,
+      ...(includeReferences ? { references } : {}),
+      ...(truncatedReferences > 0 ? { truncatedReferences } : {}),
+    };
+  }
+
   const documents = await loadDocuments(languageService, root, maxFiles);
   const files: FileTuple[] = documents.map((document) => [
     getDisplayPath(root, document.path),
@@ -320,61 +383,6 @@ export async function exploreWorkspace(
   }
 
   let truncatedSymbols = 0;
-
-  if (options.file) {
-    const candidates = [
-      resolve(options.file),
-      resolve(root, options.file),
-    ];
-    const matchingFileId = documents.findIndex(
-      (doc) => candidates.includes(doc.path),
-    );
-
-    if (matchingFileId !== -1) {
-      const filteredSymbols = symbols
-        .filter((symbol) => symbol[0] === matchingFileId)
-        .map((symbol): SymbolTuple => [0, symbol[1], symbol[2], symbol[3], symbol[4], symbol[5]]);
-      const filteredImports = imports
-        .filter((entry) => entry[0] === matchingFileId)
-        .map((entry): ImportTuple => [0, entry[1], entry[2], entry[3], entry[4]]);
-      const filteredFiles: FileTuple[] = [files[matchingFileId]!];
-
-      let references: Record<string, ReferenceTuple[]> = {};
-      let truncatedReferences = 0;
-      if (includeReferences) {
-        const fileSources = symbolSources.filter(
-          (source) => source.document.path === documents[matchingFileId]!.path,
-        );
-        const collectedRefs = await collectSelectedReferences(
-          languageService,
-          fileSources,
-          maxReferences,
-        );
-        references = collectedRefs.references;
-        truncatedReferences = collectedRefs.truncatedReferences;
-      }
-
-      return {
-        schemaVersion: 3,
-        root,
-        level,
-        files: filteredFiles,
-        symbols: filteredSymbols,
-        imports: filteredImports,
-        ...(includeReferences ? { references } : {}),
-        ...(truncatedReferences > 0 ? { truncatedReferences } : {}),
-      };
-    }
-
-    return {
-      schemaVersion: 3,
-      root,
-      level,
-      files: [],
-      symbols: [],
-      imports: [],
-    };
-  }
 
   const indexed = symbols.map((symbol, index) => ({ symbol, index }));
   indexed.sort((left, right) => {
