@@ -1,3 +1,3 @@
-("(" @open ")" @close)
-("[" @open "]" @close)
-("{" @open "}" @close)
+((lparen) @open (rparen) @close)
+((lbracket) @open (rbracket) @close)
+((lbrace) @open (rbrace) @close)

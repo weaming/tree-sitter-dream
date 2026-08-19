@@ -7,12 +7,12 @@ ZED_GIT_HTTPS_PREFIX ?= https://github.com/weaming/
 
 .PHONY: lsp-build install install-lsp install-lsp-server install-lsp-mcp install-zed-extension
 
+install-all: install-lsp install-zed-extension
+
+install-lsp: lsp-build install-lsp-server install-lsp-mcp
+
 lsp-build:
 	cd lsp && bun install --frozen-lockfile && bun run build
-
-install: install-lsp
-
-install-lsp: install-lsp-server install-lsp-mcp
 
 install-lsp-server: lsp-build
 	mkdir -p "$(LSP_INSTALL_DIR)"

@@ -97,9 +97,9 @@
 (module_name) @module
 
 [
-  "(" ")"
-  "[" "]"
-  "{" "}"
+  (lparen) (rparen)
+  (lbracket) (rbracket)
+  (lbrace) (rbrace)
 ] @punctuation.bracket
 
 [
