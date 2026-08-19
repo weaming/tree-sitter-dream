@@ -1,0 +1,15 @@
+id = "dream-lang"
+name = "Dream Lang"
+version = "0.1.0"
+schema_version = 1
+authors = ["weaming"]
+description = "Dream language support for Zed"
+repository = "https://github.com/weaming/tree-sitter-dream/zed"
+
+[grammars.dream]
+repository = "https://github.com/weaming/tree-sitter-dream"
+rev = "09f1433e648449333cab447e003e5e2b99a3aed7"
+
+[language_servers.dream-language-server]
+name = "Dream Language Server"
+languages = ["Dream"]
