@@ -60,8 +60,29 @@ Build and install the MCP server with `make install-lsp`. Register it in Codex:
 codex mcp add dream-lsp -- ~/.bun/bin/dream-lsp-mcp
 ```
 
-The server provides `dream_diagnostics`, `dream_workspace_relations`, and
-`dream_references` tools over stdio.
+The server provides `dream_analyze`, `dream_workspace`, and
+`dream_find` tools over stdio. `dream_find` accepts either
+`path` + `line` + `character`, or `root` + `symbol`; symbol-name searches are
+case-insensitive and accept `maxFiles`/`maxMatches` limits.
+
+`dream_workspace` returns compact Markdown with CSV code blocks and
+uses `schemaVersion: 3`. `files`, `symbols`, and `imports` are tuple arrays
+whose numeric indexes avoid repeating file paths and field names. The default
+`level: "summary"` includes only module-level symbols; use `level: "full"` for
+local variables, parameters, and fields. Symbols are weighted by reference
+count (functions count double), sorted, and limited by `maxSymbols` (default
+`30`), with truncation reported in the result. Each symbol tuple is
+`[file, name, kind, startLine, endLine, referenceCount]`; `kind` is numeric and
+the Markdown output includes one `kind,name` mapping table. Import tuples are
+`[file, line, character, module, names]`, with zero-based positions and
+`file` referring to the Files table.
+Symbols include a reference count but omit reference positions by default. Pass
+`includeReferences: true` and optionally `maxReferences` to request positions;
+reference positions are collected only for the selected symbols, so the budget
+is never spent on truncated ones. Use `dream_find` for one symbol when
+exact locations are needed. The MCP
+workspace result is intentionally text-only to avoid sending duplicate JSON and
+Markdown representations to the AI.
 
 ## Verify
 

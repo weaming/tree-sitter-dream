@@ -26,9 +26,9 @@ function commaSep1(rule) {
 module.exports = grammar({
   name: 'dream',
 
-  externals: $ => [$.indent, $.dedent, $.newline],
+  externals: $ => [$.indent, $.dedent, $.newline, $.lbrace, $.rbrace, $.lbracket, $.rbracket, $.lparen, $.rparen],
 
-  extras: $ => [/[ \t\r]/, $.comment],
+  extras: $ => [/[ \t\r\n]/, $.comment],
 
   word: $ => $.identifier,
 
@@ -101,16 +101,16 @@ module.exports = grammar({
       field('parameters', $.parameters),
       optional(seq('->', field('return_type', $.type))),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', optional($.statement_block)),
       $.dedent,
     ),
 
     type_parameters: $ => seq(
-      '[',
+      $.lbracket,
       commaSep1(choice($.identifier, $.bounded_type_parameter)),
-      ']',
+      $.rbracket,
     ),
 
     bounded_type_parameter: $ => seq(
@@ -119,7 +119,7 @@ module.exports = grammar({
       field('bound', $.type),
     ),
 
-    parameters: $ => seq('(', commaSep($.parameter), ')'),
+    parameters: $ => seq($.lparen, commaSep($.parameter), $.rparen),
 
     parameter: $ => seq(
       field('name', choice($.identifier, 'self')),
@@ -132,7 +132,7 @@ module.exports = grammar({
       field('name', $.identifier),
       optional($.type_parameters),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', optional($.struct_member_block)),
       $.dedent,
@@ -164,7 +164,7 @@ module.exports = grammar({
       field('name', $.identifier),
       optional($.type_parameters),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', optional($.interface_member_block)),
       $.dedent,
@@ -221,7 +221,7 @@ module.exports = grammar({
       'for',
       field('target', $.type),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', optional($.impl_member_block)),
       $.dedent,
@@ -252,14 +252,14 @@ module.exports = grammar({
       $.newline,
     ),
 
-    type_arguments: $ => seq('[', commaSep1($.type), ']'),
+    type_arguments: $ => seq($.lbracket, commaSep1($.type), $.rbracket),
 
     enum_definition: $ => seq(
       'enum',
       field('name', $.identifier),
       optional($.type_parameters),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', optional($.enum_member_block)),
       repeat($.newline),
@@ -268,7 +268,7 @@ module.exports = grammar({
 
     enum_member_variant: $ => seq(
       field('name', $.identifier),
-      optional(seq('(', field('types', commaSep($.type)), ')')),
+      optional(seq($.lparen, field('types', commaSep($.type)), $.rparen)),
       $.newline,
     ),
 
@@ -321,9 +321,9 @@ module.exports = grammar({
 
     print_statement: $ => seq(
       'print',
-      '(',
-      optional(field('argument', $.expression)),
-      ')',
+      $.lparen,
+      optional(field('argument', commaSep1($.expression))),
+      $.rparen,
       $.newline,
     ),
 
@@ -338,7 +338,7 @@ module.exports = grammar({
       'if',
       field('condition', $.expression),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('consequence', repeat($.statement)),
       $.dedent,
@@ -350,7 +350,7 @@ module.exports = grammar({
       'elif',
       field('condition', $.expression),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', repeat($.statement)),
       $.dedent,
@@ -359,7 +359,7 @@ module.exports = grammar({
     else_clause: $ => seq(
       'else',
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', repeat($.statement)),
       $.dedent,
@@ -369,7 +369,7 @@ module.exports = grammar({
       'while',
       field('condition', $.expression),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', repeat($.statement)),
       $.dedent,
@@ -381,7 +381,7 @@ module.exports = grammar({
       'in',
       field('iterable', $.expression),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', repeat($.statement)),
       $.dedent,
@@ -391,7 +391,7 @@ module.exports = grammar({
       'switch',
       field('value', $.expression),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('cases', repeat($.switch_case)),
       $.dedent,
@@ -403,7 +403,7 @@ module.exports = grammar({
         'default',
       ),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('body', repeat($.statement)),
       $.dedent,
@@ -414,7 +414,7 @@ module.exports = grammar({
       optional(seq('type', 'of')),
       field('value', $.expression),
       ':',
-      $.newline,
+      repeat1($.newline),
       $.indent,
       field('cases', repeat1($.match_case)),
       repeat($.newline),
@@ -474,7 +474,7 @@ module.exports = grammar({
     enum_pattern: $ => seq(
       optional(seq(field('enum', $.identifier), '.')),
       field('variant', $.identifier),
-      optional(seq('(', commaSep($.match_pattern), ')')),
+      optional(seq($.lparen, commaSep($.match_pattern), $.rparen)),
     ),
 
     wildcard_pattern: _ => '_',
@@ -489,17 +489,17 @@ module.exports = grammar({
       'None',
     ),
 
-    list_pattern: $ => seq('[', commaSep($.match_pattern), ']'),
+    list_pattern: $ => seq($.lbracket, commaSep($.match_pattern), $.rbracket),
 
-    tuple_pattern_pattern: $ => seq('(', commaSep1($.match_pattern), ')'),
+    tuple_pattern_pattern: $ => seq($.lparen, commaSep1($.match_pattern), $.rparen),
 
     cons_pattern: $ => prec.right(PREC.union, seq($.match_pattern, '::', $.match_pattern)),
 
     struct_pattern: $ => seq(
       optional(field('name', $.identifier)),
-      '{',
+      $.lbrace,
       commaSep($.struct_pattern_field),
-      '}',
+      $.rbrace,
     ),
 
     struct_pattern_field: $ => seq(
@@ -546,7 +546,7 @@ module.exports = grammar({
       field('arguments', $.arguments),
     )),
 
-    arguments: $ => seq('(', commaSep($.expression), ')'),
+    arguments: $ => seq($.lparen, commaSep($.expression), $.rparen),
 
     field_expression: $ => prec.left(PREC.postfix, seq(
       field('object', $._postfixable_base),
@@ -556,9 +556,9 @@ module.exports = grammar({
 
     index_expression: $ => prec.left(PREC.postfix, seq(
       field('object', $._postfixable_base),
-      '[',
+      $.lbracket,
       field('index', choice($.slice, $.expression)),
-      ']',
+      $.rbracket,
     )),
 
     _postfix_base: $ => choice(
@@ -610,21 +610,21 @@ module.exports = grammar({
       prec.right(PREC.power, seq($.expression, '**', $.expression)),
     ),
 
-    parenthesized_expression: $ => seq('(', $.expression, ')'),
+    parenthesized_expression: $ => seq($.lparen, $.expression, $.rparen),
 
-    tuple_expression: $ => seq('(', commaSep1($.expression), ')'),
+    tuple_expression: $ => seq($.lparen, commaSep1($.expression), $.rparen),
 
-    list_expression: $ => seq('[', commaSep($.expression), ']'),
+    list_expression: $ => seq($.lbracket, commaSep($.expression), $.rbracket),
 
-    dict_expression: $ => seq('{', commaSep($.dict_pair), '}'),
+    dict_expression: $ => seq($.lbrace, commaSep($.dict_pair), $.rbrace),
 
     dict_pair: $ => seq($.expression, ':', $.expression),
 
     struct_literal: $ => seq(
       field('name', $.identifier),
-      '{',
+      $.lbrace,
       commaSep($.struct_field_init),
-      '}',
+      $.rbrace,
     ),
 
     struct_field_init: $ => seq(
@@ -666,14 +666,14 @@ module.exports = grammar({
     try_expression: $ => prec(PREC.postfix, seq($._postfixable_base, '?')),
 
     list_comprehension: $ => seq(
-      '[',
+      $.lbracket,
       $.expression,
       'for',
       $.identifier,
       'in',
       $.expression,
       optional(seq('if', $.expression)),
-      ']',
+      $.rbracket,
     ),
 
     lambda_expression: $ => seq(
@@ -692,9 +692,9 @@ module.exports = grammar({
 
     type_atom: $ => choice(
       $.identifier,
-      seq($.identifier, '[', commaSep1($.type), ']'),
-      seq('[', $.type, ']'),
-      seq('(', commaSep($.type), ')', optional(seq('->', $.type))),
+      seq($.identifier, $.lbracket, commaSep1($.type), $.rbracket),
+      seq($.lbracket, $.type, $.rbracket),
+      seq($.lparen, commaSep($.type), $.rparen, optional(seq('->', $.type))),
     ),
 
     module_name: $ => seq($.identifier, repeat(seq('.', $.identifier))),

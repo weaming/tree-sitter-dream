@@ -5,10 +5,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "lparen",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         }
       ]
@@ -419,10 +427,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "dict_pair",
+          "named": true
+        },
+        {
+          "type": "lbrace",
+          "named": true
+        },
+        {
+          "type": "rbrace",
           "named": true
         }
       ]
@@ -640,11 +656,19 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
+          "type": "lparen",
+          "named": true
+        },
+        {
           "type": "newline",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         }
       ]
@@ -680,7 +704,15 @@
       "required": false,
       "types": [
         {
+          "type": "lparen",
+          "named": true
+        },
+        {
           "type": "match_pattern",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         }
       ]
@@ -1509,6 +1541,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "lbracket",
+          "named": true
+        },
+        {
+          "type": "rbracket",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1764,6 +1810,14 @@
         {
           "type": "identifier",
           "named": true
+        },
+        {
+          "type": "lbracket",
+          "named": true
+        },
+        {
+          "type": "rbracket",
+          "named": true
         }
       ]
     }
@@ -1774,10 +1828,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "lbracket",
+          "named": true
+        },
+        {
+          "type": "rbracket",
           "named": true
         }
       ]
@@ -1789,10 +1851,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
+          "type": "lbracket",
+          "named": true
+        },
+        {
           "type": "match_pattern",
+          "named": true
+        },
+        {
+          "type": "rbracket",
           "named": true
         }
       ]
@@ -2053,10 +2123,18 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
+          "type": "lparen",
+          "named": true
+        },
+        {
           "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         }
       ]
@@ -2067,11 +2145,19 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "lparen",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         }
       ]
@@ -2136,9 +2222,13 @@
     "named": true,
     "fields": {
       "argument": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": ",",
+            "named": false
+          },
           {
             "type": "expression",
             "named": true
@@ -2147,11 +2237,19 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
+          "type": "lparen",
+          "named": true
+        },
+        {
           "type": "newline",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         }
       ]
@@ -2392,8 +2490,16 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "lbrace",
+          "named": true
+        },
+        {
+          "type": "rbrace",
+          "named": true
+        },
         {
           "type": "struct_field_init",
           "named": true
@@ -2460,8 +2566,16 @@
     },
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "lbrace",
+          "named": true
+        },
+        {
+          "type": "rbrace",
+          "named": true
+        },
         {
           "type": "struct_pattern_field",
           "named": true
@@ -2739,6 +2853,14 @@
         {
           "type": "expression",
           "named": true
+        },
+        {
+          "type": "lparen",
+          "named": true
+        },
+        {
+          "type": "rparen",
+          "named": true
         }
       ]
     }
@@ -2752,7 +2874,15 @@
       "required": true,
       "types": [
         {
+          "type": "lparen",
+          "named": true
+        },
+        {
           "type": "match_pattern",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         }
       ]
@@ -2782,6 +2912,14 @@
       "required": true,
       "types": [
         {
+          "type": "lbracket",
+          "named": true
+        },
+        {
+          "type": "rbracket",
+          "named": true
+        },
+        {
           "type": "type",
           "named": true
         }
@@ -2794,10 +2932,26 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "lbracket",
+          "named": true
+        },
+        {
+          "type": "lparen",
+          "named": true
+        },
+        {
+          "type": "rbracket",
+          "named": true
+        },
+        {
+          "type": "rparen",
           "named": true
         },
         {
@@ -2836,6 +2990,14 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "lbracket",
+          "named": true
+        },
+        {
+          "type": "rbracket",
           "named": true
         }
       ]
@@ -2962,14 +3124,6 @@
     "named": false
   },
   {
-    "type": "(",
-    "named": false
-  },
-  {
-    "type": ")",
-    "named": false
-  },
-  {
     "type": "*",
     "named": false
   },
@@ -3071,14 +3225,6 @@
   },
   {
     "type": "True",
-    "named": false
-  },
-  {
-    "type": "[",
-    "named": false
-  },
-  {
-    "type": "]",
     "named": false
   },
   {
@@ -3187,8 +3333,20 @@
     "named": false
   },
   {
+    "type": "lbrace",
+    "named": true
+  },
+  {
+    "type": "lbracket",
+    "named": true
+  },
+  {
     "type": "let",
     "named": false
+  },
+  {
+    "type": "lparen",
+    "named": true
   },
   {
     "type": "match",
@@ -3219,8 +3377,20 @@
     "named": false
   },
   {
+    "type": "rbrace",
+    "named": true
+  },
+  {
+    "type": "rbracket",
+    "named": true
+  },
+  {
     "type": "return",
     "named": false
+  },
+  {
+    "type": "rparen",
+    "named": true
   },
   {
     "type": "rune",
@@ -3267,15 +3437,7 @@
     "named": true
   },
   {
-    "type": "{",
-    "named": false
-  },
-  {
     "type": "|",
-    "named": false
-  },
-  {
-    "type": "}",
     "named": false
   },
   {
