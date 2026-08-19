@@ -24,7 +24,7 @@ bun run build
 ```
 
 The build produces two self-contained executables at `lsp/dist/dream-language-server`
-and `lsp/dist/dream-lsp-cli`. They embed the Bun runtime, dependencies, Tree-sitter
+and `lsp/dist/dream-lsp-mcp`. They embed the Bun runtime, dependencies, Tree-sitter
 runtime WASM, and Dream grammar WASM.
 
 For a non-compiled JavaScript bundle during development, use `bun run build:js`.
@@ -42,15 +42,6 @@ Set `DREAM_TREE_SITTER_WASM` to override the parser path. For development:
 ```sh
 bun run dev
 ```
-
-For one-shot diagnostics suitable for scripts and coding agents:
-
-```sh
-lsp/dist/dream-lsp-cli examples/lang_full_dream.dm bootstrap/compiler.dm
-```
-
-The command prints JSON with one result per file and exits with status `1` when
-syntax diagnostics are found. Use `--pretty` for indented output.
 
 ## MCP
 

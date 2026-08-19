@@ -6,12 +6,11 @@
   "type": "module",
   "bin": {
     "dream-language-server": "./dist/dream-language-server",
-    "dream-lsp-cli": "./dist/dream-lsp-cli",
     "dream-lsp-mcp": "./dist/dream-lsp-mcp"
   },
   "scripts": {
     "build": "bun run build:bin",
-    "build:bin": "mkdir -p dist && bun build --compile --minify src/server.ts --outfile=dist/dream-language-server && bun build --compile --minify src/cli.ts --outfile=dist/dream-lsp-cli && bun build --compile --minify src/mcp.ts --outfile=dist/dream-lsp-mcp",
+    "build:bin": "mkdir -p dist && bun build --compile --minify src/server.ts --outfile=dist/dream-language-server && bun build --compile --minify src/mcp.ts --outfile=dist/dream-lsp-mcp",
     "build:server": "bun build src/server.ts --target=node --outdir=dist",
     "build:js": "bun run build:server && bun run copy:wasm",
     "copy:wasm": "mkdir -p dist && cp ../tree-sitter-dream.wasm dist/tree-sitter-dream.wasm && cp node_modules/web-tree-sitter/tree-sitter.wasm dist/tree-sitter.wasm",

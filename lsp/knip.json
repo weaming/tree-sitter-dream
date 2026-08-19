@@ -1,6 +1,5 @@
 {
   "entry": [
-    "src/cli.ts",
     "src/mcp.ts"
   ],
   "project": [
