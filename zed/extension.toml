@@ -8,7 +8,7 @@ repository = "https://github.com/weaming/tree-sitter-dream/zed"
 
 [grammars.dream]
 repository = "https://github.com/weaming/tree-sitter-dream"
-rev = "09f1433e648449333cab447e003e5e2b99a3aed7"
+rev = "HEAD"
 
 [language_servers.dream-language-server]
 name = "Dream Language Server"
