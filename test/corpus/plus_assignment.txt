@@ -1,0 +1,33 @@
+==============================
+Plus assignment
+==============================
+def main():
+    let value = 1
+    value += 2
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      (statement_block
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (integer))
+            (newline)))
+        (statement
+          (plus_assignment_statement
+            (identifier)
+            (expression
+              (integer))
+            (newline))))
+      (dedent))))

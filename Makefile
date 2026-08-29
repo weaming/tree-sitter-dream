@@ -4,6 +4,17 @@ ZED_EXTENSION_ID ?= dream-lang
 ZED_EXTENSION_PACKAGE ?= zed/dist/dream-lang.tar.gz
 ZED_GIT_SSH_PREFIX ?= git@github.com:weaming/
 ZED_GIT_HTTPS_PREFIX ?= https://github.com/weaming/
+DREAM_ROOT ?= ../dream
+
+all: install-lsp install-zed-extension
+
+verify: verify-tree-sitter verify-dream-parser
+
+verify-tree-sitter:
+	tree-sitter test
+
+verify-dream-parser:
+	fish scripts/check-dream-parser.fish "$(DREAM_ROOT)"
 
 install-lsp: lsp-build install-lsp-server install-lsp-mcp
 

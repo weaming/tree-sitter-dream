@@ -16,6 +16,7 @@ import {
   TextDocumentPositionParams,
 } from 'vscode-languageserver/node.js';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { fileURLToPath } from 'node:url';
 import { DreamLanguageService } from './analyzer.js';
 import { findWasmPath } from './wasm.js';
 
@@ -49,23 +50,40 @@ function publishDiagnostics(document: TextDocument): void {
   }
 }
 
-connection.onInitialize((_params: InitializeParams): InitializeResult => ({
-  capabilities: {
-    textDocumentSync: TextDocumentSyncKind.Full,
-    documentSymbolProvider: true,
-    foldingRangeProvider: true,
-    hoverProvider: true,
-    definitionProvider: true,
-    referencesProvider: true,
-    renameProvider: { prepareProvider: true },
-    completionProvider: { triggerCharacters: ['.', '_'] },
-  },
-}));
+connection.onInitialize(async (params: InitializeParams): Promise<InitializeResult> => {
+  const roots = new Set<string>();
+  for (const folder of params.workspaceFolders ?? []) {
+    if (!folder.uri.startsWith('file:')) continue;
+    roots.add(fileURLToPath(folder.uri));
+  }
+  if (roots.size === 0 && params.rootUri?.startsWith('file:')) {
+    roots.add(fileURLToPath(params.rootUri));
+  }
+  if (roots.size === 0 && params.rootPath) roots.add(params.rootPath);
+
+  await languageService?.loadWorkspace([...roots]);
+
+  return {
+    capabilities: {
+      textDocumentSync: TextDocumentSyncKind.Full,
+      documentSymbolProvider: true,
+      foldingRangeProvider: true,
+      hoverProvider: true,
+      definitionProvider: true,
+      referencesProvider: true,
+      renameProvider: { prepareProvider: true },
+      completionProvider: { triggerCharacters: ['.', '_'] },
+    },
+  };
+});
 
 documents.onDidOpen((event) => publishDiagnostics(event.document));
 documents.onDidChangeContent((event) => publishDiagnostics(event.document));
 documents.onDidClose((event) => {
-  languageService?.remove(event.document.uri);
+  void languageService?.close(event.document.uri).catch((error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    connection.console.error(`Dream LSP could not restore ${event.document.uri}: ${message}`);
+  });
   connection.sendDiagnostics({ uri: event.document.uri, diagnostics: [] });
 });
 

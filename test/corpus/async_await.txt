@@ -1,0 +1,30 @@
+==============================
+Async and await
+==============================
+async def main():
+    return await load()
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      (statement_block
+        (statement
+          (return_statement
+            (expression
+              (await_expression
+                (expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (lparen)
+                      (rparen))))))
+            (newline))))
+      (dedent))))

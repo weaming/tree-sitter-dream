@@ -1,0 +1,31 @@
+==============================
+Relative imports
+==============================
+from .helpers import format_value
+from ..shared import config
+from ...runtime.stdlib import *
+
+---
+
+(source_file
+  (top_level_item
+    (from_import
+      module: (module_name
+        (identifier))
+      names: (import_name
+        (identifier))
+      (newline)))
+  (top_level_item
+    (from_import
+      module: (module_name
+        (identifier))
+      names: (import_name
+        (identifier))
+      (newline)))
+  (top_level_item
+    (from_import
+      module: (module_name
+        (identifier)
+        (identifier))
+      names: (import_name)
+      (newline))))

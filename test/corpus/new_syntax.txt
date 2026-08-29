@@ -1,0 +1,594 @@
+==============================
+Break and continue
+==============================
+def main():
+    let i = 0
+    while i < 10:
+        if i == 5:
+            break
+        if i == 3:
+            continue
+        i = i + 1
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (integer))
+            (newline)))
+        (statement
+          (while_statement
+            condition: (expression
+              (binary_expression
+                (expression
+                  (identifier))
+                (expression
+                  (integer))))
+            (newline)
+            (indent)
+            body: (statement
+              (if_statement
+                condition: (expression
+                  (binary_expression
+                    (expression
+                      (identifier))
+                    (expression
+                      (integer))))
+                (newline)
+                (indent)
+                consequence: (statement
+                  (break_statement
+                    (newline)))
+                (dedent)))
+            body: (statement
+              (if_statement
+                condition: (expression
+                  (binary_expression
+                    (expression
+                      (identifier))
+                    (expression
+                      (integer))))
+                (newline)
+                (indent)
+                consequence: (statement
+                  (continue_statement
+                    (newline)))
+                (dedent)))
+            body: (statement
+              (simple_assignment_statement
+                left: (identifier)
+                right: (expression
+                  (binary_expression
+                    (expression
+                      (identifier))
+                    (expression
+                      (integer))))
+                (newline)))
+            (dedent))))
+      (dedent))))
+
+==============================
+Field assignment
+==============================
+def main():
+    let p = Point{x: 1, y: 2}
+    p.x = 10
+    p.y = 20
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (struct_literal
+                name: (identifier)
+                (lbrace)
+                (struct_field_init
+                  name: (identifier)
+                  value: (expression
+                    (integer)))
+                (struct_field_init
+                  name: (identifier)
+                  value: (expression
+                    (integer)))
+                (rbrace)))
+            (newline)))
+        (statement
+          (field_assignment_statement
+            object: (identifier)
+            field: (identifier)
+            value: (expression
+              (integer))
+            (newline)))
+        (statement
+          (field_assignment_statement
+            object: (identifier)
+            field: (identifier)
+            value: (expression
+              (integer))
+            (newline))))
+      (dedent))))
+
+==============================
+With statement
+==============================
+def main():
+    with f as name:
+        let x = name
+        let y = x + 1
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (with_statement
+            resource: (expression
+              (identifier))
+            name: (identifier)
+            (newline)
+            (indent)
+            body: (statement
+              (let_statement
+                name: (pattern
+                  (identifier))
+                value: (expression
+                  (identifier))
+                (newline)))
+            body: (statement
+              (let_statement
+                name: (pattern
+                  (identifier))
+                value: (expression
+                  (binary_expression
+                    (expression
+                      (identifier))
+                    (expression
+                      (integer))))
+                (newline)))
+            (dedent))))
+      (dedent))))
+
+==============================
+List and cons patterns
+==============================
+def main():
+    let [a, b, c] = numbers
+    let head :: tail = nums
+    let (x, y) = pair
+    let Point{x: a, y: b} = p
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (let_statement
+            name: (pattern
+              (list_pattern
+                (lbracket)
+                (match_pattern
+                  (identifier))
+                (match_pattern
+                  (identifier))
+                (match_pattern
+                  (identifier))
+                (rbracket)))
+            value: (expression
+              (identifier))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (cons_pattern
+                (match_pattern
+                  (identifier))
+                (match_pattern
+                  (identifier))))
+            value: (expression
+              (identifier))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (tuple_pattern_pattern
+                (lparen)
+                (match_pattern
+                  (identifier))
+                (match_pattern
+                  (identifier))
+                (rparen)))
+            value: (expression
+              (identifier))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (struct_pattern
+                name: (identifier)
+                (lbrace)
+                (struct_pattern_field
+                  name: (identifier)
+                  value: (match_pattern
+                    (identifier)))
+                (struct_pattern_field
+                  name: (identifier)
+                  value: (match_pattern
+                    (identifier)))
+                (rbrace)))
+            value: (expression
+              (identifier))
+            (newline))))
+      (dedent))))
+
+==============================
+Ternary, if-expression and type-of
+==============================
+def main():
+    let cond = x > 0 ? 1 : 0
+    let sel = if cond > 0: cond else: 0
+    let t = type of value
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (ternary_expression
+                condition: (expression
+                  (binary_expression
+                    (expression
+                      (identifier))
+                    (expression
+                      (integer))))
+                consequence: (expression
+                  (integer))
+                alternative: (expression
+                  (integer))))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (if_expression
+                condition: (expression
+                  (binary_expression
+                    (expression
+                      (identifier))
+                    (expression
+                      (integer))))
+                consequence: (expression
+                  (identifier))
+                alternative: (expression
+                  (integer))))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (type_of_expression
+                value: (expression
+                  (identifier))))
+            (newline))))
+      (dedent))))
+
+==============================
+Try propagation operator
+==============================
+def safe():
+    let v = compute()?
+    return v
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (try_expression
+                value: (call_expression
+                  function: (identifier)
+                  arguments: (arguments
+                    (lparen)
+                    (rparen)))))
+            (newline)))
+        (statement
+          (return_statement
+            value: (expression
+              (identifier))
+            (newline))))
+      (dedent))))
+
+==============================
+Switch with multiple cases
+==============================
+def main():
+    let v = 2
+    switch v:
+        case 1, 2:
+            print(10)
+        case 3:
+            print(20)
+        default:
+            print(0)
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (integer))
+            (newline)))
+        (statement
+          (switch_statement
+            value: (expression
+              (identifier))
+            (newline)
+            (indent)
+            cases: (switch_case
+              values: (expression
+                (integer))
+              values: (expression
+                (integer))
+              (newline)
+              (indent)
+              body: (statement
+                (print_statement
+                  (lparen)
+                  argument: (expression
+                    (integer))
+                  (rparen)
+                  (newline)))
+              (dedent))
+            cases: (switch_case
+              values: (expression
+                (integer))
+              (newline)
+              (indent)
+              body: (statement
+                (print_statement
+                  (lparen)
+                  argument: (expression
+                    (integer))
+                  (rparen)
+                  (newline)))
+              (dedent))
+            cases: (switch_case
+              (newline)
+              (indent)
+              body: (statement
+                (print_statement
+                  (lparen)
+                  argument: (expression
+                    (integer))
+                  (rparen)
+                  (newline)))
+              (dedent))
+            (dedent))))
+      (dedent))))
+
+==============================
+Option and Result enum literals
+==============================
+def main():
+    let some_val = Some(42)
+    let no_val = None
+    let ok_val = Ok(1)
+    let err_val = Err("oops")
+    let opt = Option.Some(7)
+    let res = Result.Ok(0)
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
+                  (lparen)
+                  (expression
+                    (integer))
+                  (rparen))))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (enum_variant_expression))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
+                  (lparen)
+                  (expression
+                    (integer))
+                  (rparen))))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
+                  (lparen)
+                  (expression
+                    (string))
+                  (rparen))))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
+                  (lparen)
+                  (expression
+                    (integer))
+                  (rparen))))
+            (newline)))
+        (statement
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
+                  (lparen)
+                  (expression
+                    (integer))
+                  (rparen))))
+            (newline))))
+      (dedent))))
+
+==============================
+Interface inheritance
+==============================
+interface Base:
+    def name() -> str
+
+interface Child extends Base:
+    def value() -> int
+
+---
+
+(source_file
+  (top_level_item
+    (interface_definition
+      name: (identifier)
+      (newline)
+      (indent)
+      body: (interface_member_block
+        (interface_member
+          (interface_method
+            name: (identifier)
+            parameters: (parameters
+              (lparen)
+              (rparen))
+            return_type: (type
+              (type_atom
+                (identifier)))
+            (newline)))
+        (interface_member
+          (newline)))
+      (dedent)))
+  (top_level_item
+    (interface_definition
+      name: (identifier)
+      parents: (interface_parent
+        name: (identifier))
+      (newline)
+      (indent)
+      body: (interface_member_block
+        (interface_member
+          (interface_method
+            name: (identifier)
+            parameters: (parameters
+              (lparen)
+              (rparen))
+            return_type: (type
+              (type_atom
+                (identifier)))
+            (newline))))
+      (dedent))))

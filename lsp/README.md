@@ -10,6 +10,7 @@ Current capabilities:
 - Completion
 - Go to definition
 - Find references
+- Workspace-aware navigation across imported `.dm` files
 - Rename
 - Folding ranges
 

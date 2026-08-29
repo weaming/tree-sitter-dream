@@ -1,0 +1,14 @@
+==============================
+Wildcard imports
+==============================
+from prelude import *
+
+---
+
+(source_file
+  (top_level_item
+    (from_import
+      module: (module_name
+        (identifier))
+      names: (import_name)
+      (newline))))

@@ -1,0 +1,64 @@
+==============================
+Parenthesized imports and membership
+==============================
+from net.http import (
+    module_status,
+    module_name,
+)
+
+def contains(items: list[int], value: int) -> bool:
+    return value not in items
+
+---
+
+(source_file
+  (top_level_item
+    (from_import
+      module: (module_name
+        (identifier)
+        (identifier))
+      (lparen)
+      names: (import_name
+        (identifier))
+      names: (import_name
+        (identifier))
+      (rparen)
+      (newline)))
+  (newline)
+  (top_level_item
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
+        (lparen)
+        (parameter
+          name: (identifier)
+          type: (type
+            (type_atom
+              (identifier)
+              (lbracket)
+              (type
+                (type_atom
+                  (identifier)))
+              (rbracket))))
+        (parameter
+          name: (identifier)
+          type: (type
+            (type_atom
+              (identifier))))
+        (rparen))
+      return_type: (type
+        (type_atom
+          (identifier)))
+      (newline)
+      (indent)
+      body: (statement_block
+        (statement
+          (return_statement
+            value: (expression
+              (binary_expression
+                (expression
+                  (identifier))
+                (expression
+                  (identifier))))
+            (newline))))
+      (dedent))))

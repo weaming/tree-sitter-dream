@@ -15,70 +15,70 @@ def main():
 
 (source_file
   (top_level_item
-    (from_import module:
-      (module_name
-        (identifier)) names:
-      (import_name
-        (identifier)) names:
-      (import_name
+    (from_import
+      module: (module_name
+        (identifier))
+      names: (import_name
+        (identifier))
+      names: (import_name
         (identifier))
       (newline)))
   (newline)
   (top_level_item
-    (function_definition name:
-      (identifier) parameters:
-      (parameters
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
         (lparen)
-        (parameter name:
-          (identifier) type:
-          (type
+        (parameter
+          name: (identifier)
+          type: (type
             (type_atom
               (identifier))))
-        (rparen)) return_type:
-      (type
+        (rparen))
+      return_type: (type
         (type_atom
           (identifier)))
       (newline)
-      (indent) body:
-      (statement_block
+      (indent)
+      body: (statement_block
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (call_expression function:
-                (identifier) arguments:
-                (arguments
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (identifier)
+                arguments: (arguments
                   (lparen)
                   (expression
                     (identifier))
                   (rparen))))
             (newline)))
         (statement
-          (return_statement value:
-            (expression
+          (return_statement
+            value: (expression
               (identifier))
             (newline)))
         (statement
           (newline)))
       (dedent)))
   (top_level_item
-    (function_definition name:
-      (identifier) parameters:
-      (parameters
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
         (lparen)
         (rparen))
       (newline)
-      (indent) body:
-      (statement_block
+      (indent)
+      body: (statement_block
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (call_expression function:
-                (identifier) arguments:
-                (arguments
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (identifier)
+                arguments: (arguments
                   (lparen)
                   (expression
                     (string))
@@ -86,11 +86,11 @@ def main():
             (newline)))
         (statement
           (print_statement
-            (lparen) argument:
-            (expression
-              (call_expression function:
-                (identifier) arguments:
-                (arguments
+            (lparen)
+            argument: (expression
+              (call_expression
+                function: (identifier)
+                arguments: (arguments
                   (lparen)
                   (expression
                     (identifier))
@@ -115,45 +115,45 @@ def evaluate(value: int):
 
 (source_file
   (top_level_item
-    (function_definition name:
-      (identifier) parameters:
-      (parameters
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
         (lparen)
-        (parameter name:
-          (identifier) type:
-          (type
+        (parameter
+          name: (identifier)
+          type: (type
             (type_atom
               (identifier))))
         (rparen))
       (newline)
-      (indent) body:
-      (statement_block
+      (indent)
+      body: (statement_block
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (call_expression function:
-                (field_expression object:
-                  (call_expression function:
-                    (enum_variant_expression enum:
-                      (identifier) variant:
-                      (identifier)) arguments:
-                    (arguments
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (field_expression
+                  object: (call_expression
+                    function: (enum_variant_expression
+                      enum: (identifier)
+                      variant: (identifier))
+                    arguments: (arguments
                       (lparen)
-                      (rparen))) field:
-                  (identifier)) arguments:
-                (arguments
+                      (rparen)))
+                  field: (identifier))
+                arguments: (arguments
                   (lparen)
                   (rparen))))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (unary_expression argument:
-                (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (unary_expression
+                argument: (expression
                   (binary_expression
                     (expression
                       (integer))
@@ -161,10 +161,10 @@ def evaluate(value: int):
                       (integer))))))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
               (binary_expression
                 (expression
                   (integer))
@@ -172,10 +172,10 @@ def evaluate(value: int):
                   (integer))))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
               (binary_expression
                 (expression
                   (binary_expression
@@ -191,10 +191,10 @@ def evaluate(value: int):
                       (integer))))))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
               (binary_expression
                 (expression
                   (integer))
@@ -202,20 +202,20 @@ def evaluate(value: int):
                   (integer))))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (unary_expression argument:
-                (expression
-                  (unary_expression argument:
-                    (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (unary_expression
+                argument: (expression
+                  (unary_expression
+                    argument: (expression
                       (identifier))))))
             (newline)))
         (statement
           (print_statement
-            (lparen) argument:
-            (expression
+            (lparen)
+            argument: (expression
               (binary_expression
                 (expression
                   (binary_expression
@@ -260,21 +260,21 @@ def make_values(value: str):
 
 (source_file
   (top_level_item
-    (struct_definition name:
-      (identifier)
+    (struct_definition
+      name: (identifier)
       (newline)
-      (indent) body:
-      (struct_member_block
+      (indent)
+      body: (struct_member_block
         (struct_member
-          (embedded_field type:
-            (type
+          (embedded_field
+            type: (type
               (type_atom
                 (identifier)))
             (newline)))
         (struct_member
-          (field_definition name:
-            (identifier) type:
-            (type
+          (field_definition
+            name: (identifier)
+            type: (type
               (type_atom
                 (lbracket)
                 (type
@@ -286,77 +286,77 @@ def make_values(value: str):
           (newline)))
       (dedent)))
   (top_level_item
-    (function_definition name:
-      (identifier) parameters:
-      (parameters
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
         (lparen)
-        (parameter name:
-          (identifier) type:
-          (type
+        (parameter
+          name: (identifier)
+          type: (type
             (type_atom
               (identifier))))
         (rparen))
       (newline)
-      (indent) body:
-      (statement_block
+      (indent)
+      body: (statement_block
         (statement
-          (constant_definition name:
-            (identifier) type:
-            (type
+          (constant_definition
+            name: (identifier)
+            type: (type
               (type_atom
-                (identifier))) value:
-            (expression
+                (identifier)))
+            value: (expression
               (rune))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (call_expression function:
-                (enum_variant_expression) arguments:
-                (arguments
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
                   (lparen)
                   (expression
                     (identifier))
                   (rparen))))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
               (enum_variant_expression))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (call_expression function:
-                (enum_variant_expression) arguments:
-                (arguments
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
                   (lparen)
                   (expression
                     (integer))
                   (rparen))))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (call_expression function:
-                (enum_variant_expression) arguments:
-                (arguments
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (call_expression
+                function: (enum_variant_expression)
+                arguments: (arguments
                   (lparen)
                   (expression
                     (integer))
                   (rparen))))
             (newline)))
         (statement
-          (return_statement value:
-            (expression
+          (return_statement
+            value: (expression
               (identifier))
             (newline))))
       (dedent))))
@@ -377,25 +377,25 @@ def print_any[T: Printable](item: T):
 
 (source_file
   (top_level_item
-    (constant_definition name:
-      (identifier) type:
-      (type
+    (constant_definition
+      name: (identifier)
+      type: (type
         (type_atom
-          (identifier))) value:
-      (expression
+          (identifier)))
+      value: (expression
         (integer))
       (newline)))
   (newline)
   (top_level_item
-    (interface_definition name:
-      (identifier)
+    (interface_definition
+      name: (identifier)
       (newline)
-      (indent) body:
-      (interface_member_block
+      (indent)
+      body: (interface_member_block
         (interface_member
-          (interface_method name:
-            (identifier) parameters:
-            (parameters
+          (interface_method
+            name: (identifier)
+            parameters: (parameters
               (lparen)
               (parameter)
               (rparen))
@@ -404,42 +404,42 @@ def print_any[T: Printable](item: T):
           (newline)))
       (dedent)))
   (top_level_item
-    (function_definition name:
-      (identifier)
+    (function_definition
+      name: (identifier)
       (type_parameters
         (lbracket)
-        (bounded_type_parameter name:
-          (identifier) bound:
-          (type
+        (bounded_type_parameter
+          name: (identifier)
+          bound: (type
             (type_atom
               (identifier))))
-        (rbracket)) parameters:
-      (parameters
+        (rbracket))
+      parameters: (parameters
         (lparen)
-        (parameter name:
-          (identifier) type:
-          (type
+        (parameter
+          name: (identifier)
+          type: (type
             (type_atom
               (identifier))))
         (rparen))
       (newline)
-      (indent) body:
-      (statement_block
+      (indent)
+      body: (statement_block
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (lambda_expression parameters:
-                (parameters
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (lambda_expression
+                parameters: (parameters
                   (lparen)
-                  (parameter name:
-                    (identifier) type:
-                    (type
+                  (parameter
+                    name: (identifier)
+                    type: (type
                       (type_atom
                         (identifier))))
-                  (rparen)) body:
-                (expression
+                  (rparen))
+                body: (expression
                   (binary_expression
                     (expression
                       (identifier))
@@ -448,11 +448,11 @@ def print_any[T: Printable](item: T):
             (newline)))
         (statement
           (print_statement
-            (lparen) argument:
-            (expression
-              (call_expression function:
-                (identifier) arguments:
-                (arguments
+            (lparen)
+            argument: (expression
+              (call_expression
+                function: (identifier)
+                arguments: (arguments
                   (lparen)
                   (expression
                     (identifier))
@@ -499,99 +499,99 @@ def convert(value: Result[int]) -> int | str:
 
 (source_file
   (top_level_item
-    (from_import module:
-      (module_name
-        (identifier)) names:
-      (import_name
+    (from_import
+      module: (module_name
+        (identifier))
+      names: (import_name
         (identifier)
         (identifier))
       (newline)))
   (newline)
   (top_level_item
-    (struct_definition name:
-      (identifier)
+    (struct_definition
+      name: (identifier)
       (type_parameters
         (lbracket)
         (identifier)
         (rbracket))
       (newline)
-      (indent) body:
-      (struct_member_block
+      (indent)
+      body: (struct_member_block
         (struct_member
-          (field_definition name:
-            (identifier) type:
-            (type
+          (field_definition
+            name: (identifier)
+            type: (type
               (type_atom
                 (identifier)))
             (newline)))
         (struct_member
-          (field_definition name:
-            (identifier) type:
-            (type
+          (field_definition
+            name: (identifier)
+            type: (type
               (type_atom
                 (identifier)))
             (newline)))
         (struct_member
           (newline))
         (struct_member
-          (function_definition name:
-            (identifier) parameters:
-            (parameters
+          (function_definition
+            name: (identifier)
+            parameters: (parameters
               (lparen)
               (parameter)
-              (rparen)) return_type:
-            (type
+              (rparen))
+            return_type: (type
               (type_atom
                 (identifier)))
             (newline)
-            (indent) body:
-            (statement_block
+            (indent)
+            body: (statement_block
               (statement
                 (expression_statement
                   (expression
                     (triple_string))
                   (newline)))
               (statement
-                (return_statement value:
-                  (expression
-                    (field_expression object:
-                      (self_expression) field:
-                      (identifier)))
+                (return_statement
+                  value: (expression
+                    (field_expression
+                      object: (self_expression)
+                      field: (identifier)))
                   (newline)))
               (statement
                 (newline)))
             (dedent))))
       (dedent)))
   (top_level_item
-    (interface_definition name:
-      (identifier)
+    (interface_definition
+      name: (identifier)
       (type_parameters
         (lbracket)
         (identifier)
         (rbracket))
       (newline)
-      (indent) body:
-      (interface_member_block
+      (indent)
+      body: (interface_member_block
         (interface_member
-          (associated_type name:
-            (identifier) value:
-            (type
+          (associated_type
+            name: (identifier)
+            value: (type
               (type_atom
                 (identifier)))
             (newline)))
         (interface_member
-          (interface_method name:
-            (identifier) parameters:
-            (parameters
+          (interface_method
+            name: (identifier)
+            parameters: (parameters
               (lparen)
               (parameter)
-              (parameter name:
-                (identifier) type:
-                (type
+              (parameter
+                name: (identifier)
+                type: (type
                   (type_atom
                     (identifier))))
-              (rparen)) return_type:
-            (type
+              (rparen))
+            return_type: (type
               (type_atom
                 (identifier)))
             (newline)))
@@ -599,15 +599,15 @@ def convert(value: Result[int]) -> int | str:
           (newline)))
       (dedent)))
   (top_level_item
-    (impl_definition interface:
-      (identifier)
+    (impl_definition
+      interface: (identifier)
       (type_arguments
         (lbracket)
         (type
           (type_atom
             (identifier)))
-        (rbracket)) target:
-      (type
+        (rbracket))
+      target: (type
         (type_atom
           (identifier)
           (lbracket)
@@ -616,55 +616,55 @@ def convert(value: Result[int]) -> int | str:
               (identifier)))
           (rbracket)))
       (newline)
-      (indent) body:
-      (impl_member_block
+      (indent)
+      body: (impl_member_block
         (impl_member
-          (function_definition name:
-            (identifier) parameters:
-            (parameters
+          (function_definition
+            name: (identifier)
+            parameters: (parameters
               (lparen)
               (parameter)
-              (parameter name:
-                (identifier) type:
-                (type
+              (parameter
+                name: (identifier)
+                type: (type
                   (type_atom
                     (identifier))))
-              (rparen)) return_type:
-            (type
+              (rparen))
+            return_type: (type
               (type_atom
                 (identifier)))
             (newline)
-            (indent) body:
-            (statement_block
+            (indent)
+            body: (statement_block
               (statement
-                (pass_statement
+                (expression_statement
+                  (expression
+                    (identifier))
                   (newline)))
               (statement
                 (newline)))
             (dedent))))
       (dedent)))
   (top_level_item
-    (enum_definition name:
-      (identifier)
+    (enum_definition
+      name: (identifier)
       (type_parameters
         (lbracket)
         (identifier)
         (rbracket))
       (newline)
-      (indent) body:
-      (enum_member_block
-        (enum_member_variant name:
-          (identifier)
-          (lparen) types:
-          (type
+      (indent)
+      body: (enum_member_block
+        (enum_member_variant
+          (lparen)
+          types: (type
             (type_atom
               (identifier)))
           (rparen)
           (newline))
-        (enum_member_variant name:
-          (identifier)
-          (lparen) types:
-          (type
+        (enum_member_variant
+          (lparen)
+          types: (type
             (type_atom
               (identifier)))
           (rparen)
@@ -672,13 +672,13 @@ def convert(value: Result[int]) -> int | str:
       (newline)
       (dedent)))
   (top_level_item
-    (function_definition name:
-      (identifier) parameters:
-      (parameters
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
         (lparen)
-        (parameter name:
-          (identifier) type:
-          (type
+        (parameter
+          name: (identifier)
+          type: (type
             (type_atom
               (identifier)
               (lbracket)
@@ -686,20 +686,20 @@ def convert(value: Result[int]) -> int | str:
                 (type_atom
                   (identifier)))
               (rbracket))))
-        (rparen)) return_type:
-      (type
+        (rparen))
+      return_type: (type
         (type_atom
           (identifier))
         (type_atom
           (identifier)))
       (newline)
-      (indent) body:
-      (statement_block
+      (indent)
+      body: (statement_block
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
               (list_expression
                 (lbracket)
                 (expression
@@ -711,14 +711,14 @@ def convert(value: Result[int]) -> int | str:
                 (rbracket)))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
-              (index_expression object:
-                (identifier)
-                (lbracket) index:
-                (slice
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
+              (index_expression
+                object: (identifier)
+                (lbracket)
+                index: (slice
                   (expression
                     (integer))
                   (expression
@@ -726,10 +726,10 @@ def convert(value: Result[int]) -> int | str:
                 (rbracket)))
             (newline)))
         (statement
-          (let_statement name:
-            (pattern
-              (identifier)) value:
-            (expression
+          (let_statement
+            name: (pattern
+              (identifier))
+            value: (expression
               (dict_expression
                 (lbrace)
                 (dict_pair
@@ -740,43 +740,41 @@ def convert(value: Result[int]) -> int | str:
                 (rbrace)))
             (newline)))
         (statement
-          (return_statement value:
-            (match_expression value:
-              (expression
+          (return_statement
+            value: (match_expression
+              value: (expression
                 (identifier))
               (newline)
-              (indent) cases:
-              (match_case pattern:
-                (match_pattern
-                  (enum_pattern variant:
-                    (identifier)
+              (indent)
+              cases: (match_case
+                pattern: (match_pattern
+                  (enum_pattern
                     (lparen)
                     (match_pattern
                       (identifier))
-                    (rparen))) guard:
-                (expression
+                    (rparen)))
+                guard: (expression
                   (binary_expression
                     (expression
                       (identifier))
                     (expression
                       (integer))))
                 (newline)
-                (indent) body:
-                (statement
+                (indent)
+                body: (statement
                   (expression_statement
                     (expression
                       (identifier))
                     (newline)))
-                (dedent)) cases:
-              (match_case pattern:
-                (match_pattern
-                  (enum_pattern variant:
-                    (identifier)
+                (dedent))
+              cases: (match_case
+                pattern: (match_pattern
+                  (enum_pattern
                     (lparen)
                     (match_pattern
                       (identifier))
-                    (rparen))) expression:
-                (expression
+                    (rparen)))
+                expression: (expression
                   (identifier))
                 (newline))
               (dedent)))))
@@ -799,81 +797,81 @@ def classify(value: int) -> int:
 
 (source_file
   (top_level_item
-    (function_definition name:
-      (identifier) parameters:
-      (parameters
+    (function_definition
+      name: (identifier)
+      parameters: (parameters
         (lparen)
-        (parameter name:
-          (identifier) type:
-          (type
+        (parameter
+          name: (identifier)
+          type: (type
             (type_atom
               (identifier))))
-        (rparen)) return_type:
-      (type
+        (rparen))
+      return_type: (type
         (type_atom
           (identifier)))
       (newline)
-      (indent) body:
-      (statement_block
+      (indent)
+      body: (statement_block
         (statement
-          (if_statement condition:
-            (expression
+          (if_statement
+            condition: (expression
               (binary_expression
                 (expression
                   (identifier))
                 (expression
                   (integer))))
             (newline)
-            (indent) consequence:
-            (statement
-              (return_statement value:
-                (expression
+            (indent)
+            consequence: (statement
+              (return_statement
+                value: (expression
                   (identifier))
                 (newline)))
             (dedent)
-            (elif_clause condition:
-              (expression
+            (elif_clause
+              condition: (expression
                 (binary_expression
                   (expression
                     (identifier))
                   (expression
                     (integer))))
               (newline)
-              (indent) body:
-              (statement
-                (return_statement value:
-                  (expression
+              (indent)
+              body: (statement
+                (return_statement
+                  value: (expression
                     (integer))
                   (newline)))
               (dedent))
             (else_clause
               (newline)
-              (indent) body:
-              (statement
-                (while_statement condition:
-                  (expression
+              (indent)
+              body: (statement
+                (while_statement
+                  condition: (expression
                     (binary_expression
                       (expression
                         (identifier))
                       (expression
                         (integer))))
                   (newline)
-                  (indent) body:
-                  (statement
-                    (let_statement name:
-                      (pattern
-                        (identifier)) value:
-                      (expression
+                  (indent)
+                  body: (statement
+                    (let_statement
+                      name: (pattern
+                        (identifier))
+                      value: (expression
                         (binary_expression
                           (expression
                             (identifier))
                           (expression
                             (integer))))
                       (newline)))
-                  (dedent))) body:
-              (statement
-                (return_statement value:
-                  (expression
+                  (dedent)))
+              body: (statement
+                (return_statement
+                  value: (expression
                     (identifier))
                   (newline)))
               (dedent)))))

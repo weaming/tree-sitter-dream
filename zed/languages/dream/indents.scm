@@ -9,6 +9,7 @@
   (for_statement)
   (switch_statement)
   (match_expression)
+  (with_statement)
 ] @indent
 
 [

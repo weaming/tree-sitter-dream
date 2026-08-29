@@ -1,0 +1,245 @@
+==============================
+Hexadecimal integer literals
+==============================
+def classify(value: int) -> int:
+    if value < 0x80:
+        return 0
+    return 1
+
+---
+
+(source_file
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (lparen)
+        (parameter
+          (identifier)
+          (type
+            (type_atom
+              (identifier))))
+        (rparen))
+      (type
+        (type_atom
+          (identifier)))
+      (newline)
+      (indent)
+      (statement_block
+        (statement
+          (if_statement
+            (expression
+              (binary_expression
+                (expression
+                  (identifier))
+                (expression
+                  (integer))))
+            (newline)
+            (indent)
+            (statement
+              (return_statement
+                (expression
+                  (integer))
+                (newline)))
+            (dedent)))
+        (statement
+          (return_statement
+            (expression
+              (integer))
+            (newline))))
+      (dedent))))
+
+==============================
+Field assignments on self
+==============================
+struct Box:
+    value: int
+
+    def clear(self):
+        self.value = 0
+
+def main():
+    let box = Box{value: 1}
+    box.value = 2
+
+---
+
+(source_file
+  (top_level_item
+    (struct_definition
+      (identifier)
+      (newline)
+      (indent)
+      (struct_member_block
+        (struct_member
+          (field_definition
+            (identifier)
+            (type
+              (type_atom
+                (identifier)))
+            (newline)))
+        (struct_member
+          (newline))
+        (struct_member
+          (function_definition
+            (identifier)
+            (parameters
+              (lparen)
+              (parameter)
+              (rparen))
+            (newline)
+            (indent)
+            (statement_block
+              (statement
+                (field_assignment_statement
+                  (self_expression)
+                  (identifier)
+                  (expression
+                    (integer))
+                  (newline)))
+              (statement
+                (newline)))
+            (dedent))))
+      (dedent)))
+  (top_level_item
+    (function_definition
+      (identifier)
+      (parameters
+        (lparen)
+        (rparen))
+      (newline)
+      (indent)
+      (statement_block
+        (statement
+          (let_statement
+            (pattern
+              (identifier))
+            (expression
+              (struct_literal
+                (identifier)
+                (lbrace)
+                (struct_field_init
+                  (identifier)
+                  (expression
+                    (integer)))
+                (rbrace)))
+            (newline)))
+        (statement
+          (field_assignment_statement
+            (identifier)
+            (identifier)
+            (expression
+              (integer))
+            (newline))))
+      (dedent))))
+
+==============================
+Nested match expression
+==============================
+let result = match outer:
+    1: match inner:
+        1: 11
+        _: 12
+    _: 0
+
+---
+
+(source_file
+  (top_level_item
+    (statement
+      (let_statement
+        (pattern
+          (identifier))
+        (match_expression
+          (expression
+            (identifier))
+          (newline)
+          (indent)
+          (match_case
+            (match_pattern
+              (literal_pattern
+                (integer)))
+            (match_expression
+              (expression
+                (identifier))
+              (newline)
+              (indent)
+              (match_case
+                (match_pattern
+                  (literal_pattern
+                    (integer)))
+                (expression
+                  (integer))
+                (newline))
+              (match_case
+                (match_pattern
+                  (wildcard_pattern))
+                (expression
+                  (integer))
+                (newline))
+              (dedent)))
+          (match_case
+            (match_pattern
+              (wildcard_pattern))
+            (expression
+              (integer))
+            (newline))
+          (dedent))))))
+
+==============================
+Unqualified enum pattern with payload
+==============================
+enum Status:
+    Ready(int)
+
+let result = match value:
+    Ready(code): code
+    _: 0
+
+---
+
+(source_file
+  (top_level_item
+    (enum_definition
+      (identifier)
+      (newline)
+      (indent)
+      (enum_member_block
+        (enum_member_variant
+          (identifier)
+          (lparen)
+          (type
+            (type_atom
+              (identifier)))
+          (rparen)
+          (newline)))
+      (newline)
+      (dedent)))
+  (top_level_item
+    (statement
+      (let_statement
+        (pattern
+          (identifier))
+        (match_expression
+          (expression
+            (identifier))
+          (newline)
+          (indent)
+          (match_case
+            (match_pattern
+              (enum_pattern
+                (identifier)
+                (lparen)
+                (match_pattern
+                  (identifier))
+                (rparen)))
+            (expression
+              (identifier))
+            (newline))
+          (match_case
+            (match_pattern
+              (wildcard_pattern))
+            (expression
+              (integer))
+            (newline))
+          (dedent))))))

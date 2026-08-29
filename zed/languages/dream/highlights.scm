@@ -3,13 +3,18 @@
 [
   "as"
   "and"
+  "async"
+  "await"
+  "break"
   "case"
   "const"
-  "def"
+  "continue"
   "default"
+  "def"
   "elif"
   "else"
   "enum"
+  "extends"
   "for"
   "from"
   "if"
@@ -23,13 +28,14 @@
   "not"
   "of"
   "or"
-  "pass"
   "print"
+  "eprint"
   "return"
   "struct"
   "switch"
   "type"
   "while"
+  "with"
 ] @keyword
 
 [
@@ -107,6 +113,7 @@
   ","
   "."
   "->"
+  "::"
 ] @punctuation.delimiter
 
 [
@@ -129,6 +136,6 @@
   "^"
   "<<"
   ">>"
+  "~"
   "?"
-  "::"
 ] @operator
